@@ -1,10 +1,10 @@
 # Set the version and project name
-set(DDMModelLoader_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(DDMModelLoader_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-# Add the library target
+# Create the static library
 add_library(DDMModelLoader STATIC DDMModelLoader.cpp)
 
-# Make the include directory available for this target
+# Specify the include directory for this library (important!)
 target_include_directories(DDMModelLoader PUBLIC ${DDMModelLoader_INCLUDE_DIR})
 
 # Optionally, install the library (e.g., to a system path or for packaging)
@@ -13,6 +13,8 @@ install(TARGETS DDMModelLoader
     INCLUDES DESTINATION include
 )
 
-install(DIRECTORY ${DDMModelLoader_INCLUDE_DIR}/DDMModelLoader
+# Install the headers for distribution (in case you use "install")
+install(DIRECTORY ${DDMModelLoader_INCLUDE_DIR}/
     DESTINATION include
+    FILES_MATCHING PATTERN "*.h"
 )
