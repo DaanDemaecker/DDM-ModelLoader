@@ -1,12 +1,15 @@
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.10)
 
-# Set the project name for the solution
-project(DDMLoader)
+# Set the project name and version
+project(DDMModelLoader VERSION 1.0 LANGUAGES CXX)
 
-# Specify the C++ standard
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-cmake_policy(SET CMP0079 NEW)
+# Set C++ standard
+set(CMAKE_CXX_STANDARD 11)
 
-# Add subdirectories for each project
-add_subdirectory(src)
+# Specify the path to your source files
+add_library(DDMModelLoader
+    src/DDMModelLoader.cpp
+)
+
+# Specify any public headers (optional)
+target_include_directories(DDMModelLoader PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
