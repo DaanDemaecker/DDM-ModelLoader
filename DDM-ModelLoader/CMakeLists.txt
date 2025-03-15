@@ -12,11 +12,10 @@ add_library(DDMModelLoader STATIC src/DDMModelLoader.cpp)
 # Specify the include directories for the target
 target_include_directories(DDMModelLoader PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
-# Optionally, set properties for the output directory if you want more control
-# set_target_properties(DDMModelLoader PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+# Optionally, specify output directories for the library (static library)
+set_target_properties(DDMModelLoader PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/out/lib
+)
 
-# This ensures that the library is easily found by the `TestSolution` project
+# Export the target for use with FetchContent
 export(TARGETS DDMModelLoader FILE "${CMAKE_BINARY_DIR}/DDMModelLoaderConfig.cmake")
-
-# You can also install the target if needed, but it’s optional for this use case
-# install(TARGETS DDMModelLoader EXPORT DDMModelLoaderConfig)

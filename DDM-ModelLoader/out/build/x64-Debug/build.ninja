@@ -55,7 +55,7 @@ build CMakeFiles\DDMModelLoader.dir\src\DDMModelLoader.cpp.obj: CXX_COMPILER__DD
   OBJECT_DIR = CMakeFiles\DDMModelLoader.dir
   OBJECT_FILE_DIR = CMakeFiles\DDMModelLoader.dir\src
   TARGET_COMPILE_PDB = CMakeFiles\DDMModelLoader.dir\DDMModelLoader.pdb
-  TARGET_PDB = DDMModelLoader.pdb
+  TARGET_PDB = out\lib\DDMModelLoader.pdb
 
 
 # =============================================================================
@@ -63,17 +63,17 @@ build CMakeFiles\DDMModelLoader.dir\src\DDMModelLoader.cpp.obj: CXX_COMPILER__DD
 
 
 #############################################
-# Link the static library DDMModelLoader.lib
+# Link the static library out\lib\DDMModelLoader.lib
 
-build DDMModelLoader.lib: CXX_STATIC_LIBRARY_LINKER__DDMModelLoader_Debug CMakeFiles\DDMModelLoader.dir\src\DDMModelLoader.cpp.obj
+build out\lib\DDMModelLoader.lib: CXX_STATIC_LIBRARY_LINKER__DDMModelLoader_Debug CMakeFiles\DDMModelLoader.dir\src\DDMModelLoader.cpp.obj
   LANGUAGE_COMPILE_FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
   LINK_FLAGS = /machine:x64
   OBJECT_DIR = CMakeFiles\DDMModelLoader.dir
   POST_BUILD = cd .
   PRE_LINK = cd .
   TARGET_COMPILE_PDB = CMakeFiles\DDMModelLoader.dir\DDMModelLoader.pdb
-  TARGET_FILE = DDMModelLoader.lib
-  TARGET_PDB = DDMModelLoader.pdb
+  TARGET_FILE = out\lib\DDMModelLoader.lib
+  TARGET_PDB = out\lib\DDMModelLoader.pdb
 
 
 #############################################
@@ -101,7 +101,9 @@ build rebuild_cache: phony CMakeFiles\rebuild_cache.util
 # =============================================================================
 # Target aliases.
 
-build DDMModelLoader: phony DDMModelLoader.lib
+build DDMModelLoader: phony out\lib\DDMModelLoader.lib
+
+build DDMModelLoader.lib: phony out\lib\DDMModelLoader.lib
 
 # =============================================================================
 # Folder targets.
@@ -111,7 +113,7 @@ build DDMModelLoader: phony DDMModelLoader.lib
 #############################################
 # Folder: C:/PrivateProjects/DDM-ModelLoader/DDM-ModelLoader/out/build/x64-Debug
 
-build all: phony DDMModelLoader.lib
+build all: phony out\lib\DDMModelLoader.lib
 
 # =============================================================================
 # Built-in targets
