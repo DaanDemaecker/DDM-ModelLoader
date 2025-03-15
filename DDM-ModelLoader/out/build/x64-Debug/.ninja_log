@@ -1,4 +1,0 @@
-# ninja log v5
-3	256	7637480292048212	CMakeFiles/DDMModelLoader.dir/src/DDMModelLoader.cpp.obj	7b45cedbff605522
-258	296	7637480292433528	lib/DDMModelLoader.lib	1928c2609713334d
-3	73	7637484226398860	out/build/x64-Debug/lib/DDMModelLoader.lib	c7ad734ce3678013
