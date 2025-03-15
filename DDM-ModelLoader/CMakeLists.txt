@@ -14,7 +14,7 @@ target_include_directories(DDMModelLoader PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src
 
 # Optionally, specify output directories for the library (static library)
 set_target_properties(DDMModelLoader PROPERTIES
-    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/out/lib
+    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
 )
 
 # Export the target for use with FetchContent

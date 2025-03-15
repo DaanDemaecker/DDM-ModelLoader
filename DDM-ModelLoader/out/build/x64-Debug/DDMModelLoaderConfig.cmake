@@ -57,7 +57,7 @@ set_target_properties(DDMModelLoader PROPERTIES
 set_property(TARGET DDMModelLoader APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
 set_target_properties(DDMModelLoader PROPERTIES
   IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "CXX"
-  IMPORTED_LOCATION_DEBUG "C:/PrivateProjects/DDM-ModelLoader/DDM-ModelLoader/out/build/x64-Debug/out/lib/DDMModelLoader.lib"
+  IMPORTED_LOCATION_DEBUG "C:/PrivateProjects/DDM-ModelLoader/DDM-ModelLoader/out/build/x64-Debug/lib/DDMModelLoader.lib"
   )
 
 # This file does not depend on other imported targets which have
