@@ -22,4 +22,4 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(glm)
 
 
-target_link_libraries(DDMModelLoader PRIVATE glm::glm)
+target_link_libraries(DDMModelLoader PUBLIC glm::glm)
