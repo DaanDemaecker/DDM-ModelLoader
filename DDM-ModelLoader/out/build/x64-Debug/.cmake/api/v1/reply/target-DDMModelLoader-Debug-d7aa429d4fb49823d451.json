@@ -12,7 +12,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "lib/DDMModelLoader.lib"
+			"path" : "out/build/x64-Debug/lib/DDMModelLoader.lib"
 		}
 	],
 	"backtrace" : 1,
