@@ -6,7 +6,8 @@
 			[
 				{
 					"build" : ".",
-					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-d173063d05d126b254df.json",
 					"minimumCMakeVersion" : 
 					{
 						"string" : "3.10"
@@ -39,7 +40,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "DDMModelLoader::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-DDMModelLoader-Debug-d7aa429d4fb49823d451.json",
+					"jsonFile" : "target-DDMModelLoader-Debug-99cb712b763265b74662.json",
 					"name" : "DDMModelLoader",
 					"projectIndex" : 0
 				}
