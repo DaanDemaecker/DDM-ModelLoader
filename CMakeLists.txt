@@ -12,6 +12,7 @@ target_include_directories(DDMModelLoader PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/inc
 
 include(FetchContent)
 
+#include glm
 FetchContent_Declare(
 	glm
 	GIT_REPOSITORY	https://github.com/g-truc/glm.git
@@ -21,5 +22,18 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(glm)
 
-
 target_link_libraries(DDMModelLoader PUBLIC glm::glm)
+
+#include tinyobjloader
+FetchContent_Declare(
+	tinyOBJLoader
+	GIT_REPOSITORY https://github.com/tinyobjloader/tinyobjloader.git
+	GIT_TAG v1.0.6
+    GIT_SHALLOW true
+)
+
+# Make the fetched content available
+FetchContent_MakeAvailable(tinyOBJLoader)
+
+# Link libraries
+target_link_libraries(DDMModelLoader PRIVATE tinyobjloader)
