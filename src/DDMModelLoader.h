@@ -15,8 +15,8 @@ namespace DDM
 		// Default constructor
 		ModelLoader();
 		
-		// Default destructor
-		~ModelLoader() = default;
+		// Destructor
+		~ModelLoader();
 
 		// Delete copy- and move operations
 		ModelLoader(ModelLoader& other) = delete;

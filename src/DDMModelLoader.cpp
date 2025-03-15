@@ -10,3 +10,8 @@ DDM::ModelLoader::ModelLoader()
 {
 	std::cout << "ModelLoader created \n";
 }
+
+DDM::ModelLoader::~ModelLoader()
+{
+	std::cout << "ModelLoader destroyed \n";
+}
