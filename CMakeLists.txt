@@ -8,5 +8,3 @@ add_library(DDMModelLoader STATIC src/DDMModelLoader.cpp)
 
 target_include_directories(DDMModelLoader PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-# Allow FetchContent to make this available
-add_subdirectory(.)
