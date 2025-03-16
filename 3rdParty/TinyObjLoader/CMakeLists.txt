@@ -13,4 +13,4 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(tinyOBJLoader)
 
 # Link libraries
-target_link_libraries(DDMModelLoader PUBLIC tinyobjloader)
+target_link_libraries(${EXECUTABLE_NAME} PUBLIC tinyobjloader)
