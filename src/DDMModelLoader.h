@@ -17,6 +17,7 @@
 namespace DDM
 {
 	class ObjLoader;
+	class FbxLoader;
 
 	class ModelLoader final
 	{
@@ -44,6 +45,7 @@ namespace DDM
 
 	private:
 		std::unique_ptr<ObjLoader> m_pObjLoader{};
+		std::unique_ptr<FbxLoader> m_pFbxLoader{};
 
 		std::string GetExtension(const std::string& filename);
 	};

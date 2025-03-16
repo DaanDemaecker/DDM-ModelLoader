@@ -5,6 +5,7 @@
 
 // File includes
 #include "ObjLoader.h"
+#include "FbxLoader.h"
 
 // Standard library includes
 #include <iostream>
@@ -14,6 +15,8 @@ DDM::ModelLoader::ModelLoader()
 	std::cout << "ModelLoader created \n";
 
 	m_pObjLoader = std::make_unique<ObjLoader>();
+
+	m_pFbxLoader = std::make_unique<FbxLoader>();
 }
 
 DDM::ModelLoader::~ModelLoader()
@@ -30,6 +33,10 @@ void DDM::ModelLoader::LoadModel(const std::string& path, std::vector<Vertex>& v
 		if (extension == "obj")
 		{
 			m_pObjLoader->LoadModel(path, vertices, indices);
+		}
+		else if (extension == "fbx")
+		{
+			m_pFbxLoader->LoadModel(path, vertices, indices);
 		}
 		else
 		{
