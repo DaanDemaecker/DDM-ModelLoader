@@ -1,39 +1,13 @@
 cmake_minimum_required(VERSION 3.10)
 project(DDMModelLoader VERSION 1.0 LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+cmake_policy(SET CMP0079 NEW)
 
 add_library(DDMModelLoader STATIC src/DDMModelLoader.cpp  "src/ObjLoader.h" "src/ObjLoader.cpp" "src/Vertex.h")
 
 target_include_directories(DDMModelLoader PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
+add_subdirectory(3rdParty)
 
-
-include(FetchContent)
-
-#include glm
-FetchContent_Declare(
-	glm
-	GIT_REPOSITORY	https://github.com/g-truc/glm.git
-	GIT_TAG 	bf71a834948186f4097caa076cd2663c69a10e1e #refs/tags/1.0.1
-	GIT_SHALLOW true
-)
-
-FetchContent_MakeAvailable(glm)
-
-target_link_libraries(DDMModelLoader PUBLIC glm::glm)
-
-#include tinyobjloader
-FetchContent_Declare(
-	tinyOBJLoader
-	GIT_REPOSITORY https://github.com/tinyobjloader/tinyobjloader.git
-	GIT_TAG v1.0.6
-    GIT_SHALLOW true
-)
-
-# Make the fetched content available
-FetchContent_MakeAvailable(tinyOBJLoader)
-
-# Link libraries
-target_link_libraries(DDMModelLoader PUBLIC tinyobjloader)
