@@ -7,22 +7,16 @@
 
 // File includes
 #include "glm/glm.hpp"
+#include "Vertex.h"
 
 // Standard library includes
 #include <string>
 #include <vector>
+#include <memory>
 
 namespace DDM
 {
-	struct Vertex
-	{
-		glm::vec3 pos;
-		glm::vec3 color;
-		glm::vec2 texCoordinates;
-		glm::vec3 normal;
-		glm::vec3 tangent;
-	};
-
+	class ObjLoader;
 
 	class ModelLoader final
 	{
@@ -49,6 +43,7 @@ namespace DDM
 
 
 	private:
+		std::unique_ptr<ObjLoader> m_pObjLoader{};
 
 		std::string GetExtension(const std::string& filename);
 	};

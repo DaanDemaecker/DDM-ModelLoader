@@ -4,7 +4,7 @@ project(DDMModelLoader VERSION 1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_library(DDMModelLoader STATIC src/DDMModelLoader.cpp )
+add_library(DDMModelLoader STATIC src/DDMModelLoader.cpp  "src/ObjLoader.h" "src/ObjLoader.cpp" "src/Vertex.h")
 
 target_include_directories(DDMModelLoader PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
@@ -36,4 +36,4 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(tinyOBJLoader)
 
 # Link libraries
-target_link_libraries(DDMModelLoader PRIVATE tinyobjloader)
+target_link_libraries(DDMModelLoader PUBLIC tinyobjloader)
