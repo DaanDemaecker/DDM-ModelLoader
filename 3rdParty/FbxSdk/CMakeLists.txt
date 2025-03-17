@@ -15,7 +15,7 @@ add_custom_command(
     TARGET copy_fbxsdkDLL POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
     ${CMAKE_CURRENT_SOURCE_DIR}/dll/debug/libfbxsdk.dll
-    ${CMAKE_BINARY_DIR}
+    $<TARGET_FILE_DIR:${EXECUTABLE_NAME}>
 )
 
 # Optional: Specify properties for MSVC runtime library linkage
