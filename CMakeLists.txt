@@ -7,7 +7,7 @@ cmake_policy(SET CMP0079 NEW)
 
 set(EXECUTABLE_NAME DDMModelLoader)
 
-add_library(${EXECUTABLE_NAME} STATIC src/DDMModelLoader.cpp  "src/ObjLoader.h" "src/ObjLoader.cpp" "src/Vertex.h" "src/FbxLoader.h" "src/FbxLoader.cpp")
+add_library(${EXECUTABLE_NAME} STATIC DDMModelLoader/DDMModelLoader.cpp  "DDMModelLoader/ObjLoader.h" "DDMModelLoader/ObjLoader.cpp" "DDMModelLoader/Vertex.h" "DDMModelLoader/FbxLoader.h" "DDMModelLoader/FbxLoader.cpp")
 
 target_include_directories(DDMModelLoader PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
