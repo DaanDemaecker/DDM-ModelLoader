@@ -9,6 +9,9 @@
 
 // Standard library includes
 #include <iostream>
+#include <cctype>
+#include <algorithm>
+
 
 DDM::ModelLoader::ModelLoader()
 {
@@ -27,6 +30,9 @@ DDM::ModelLoader::~ModelLoader()
 void DDM::ModelLoader::LoadModel(const std::string& path, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices)
 {
 	auto extension = GetExtension(path);
+
+	std::transform(extension.begin(), extension.end(), extension.begin(),
+		[](unsigned char c) { return std::tolower(c); });
 
 	try
 	{
