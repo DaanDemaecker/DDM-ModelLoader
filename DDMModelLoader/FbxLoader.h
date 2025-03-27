@@ -73,9 +73,6 @@ namespace DDM
 			fbxTexturedInfo& textureInfo, fbxSkinnedInfo& skinnedInfo,
 			std::vector<DDM::Vertex>& vertices, std::vector<uint32_t>& indices);
 
-
-		void SetupTangents(std::vector<DDM::Vertex>& vertices, std::vector<uint32_t>& indices);
-
 		void SetupSkin(fbxSkinnedInfo& skinnedInfo, int controlPointAmount);
 
 		FbxScene* LoadScene(const std::string& path);

@@ -32,9 +32,6 @@ namespace DDM
 		//     - vertices: The vector that will be used to store the vertices
 		//     - indices: The vector that will be used to store the indices
 		void LoadModel(const std::string& path, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices);
-
-	private:
-		void SetupTangents(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices);
 	};
 }
 

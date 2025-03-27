@@ -48,6 +48,8 @@ namespace DDM
 		std::unique_ptr<FbxLoader> m_pFbxLoader{};
 
 		std::string GetExtension(const std::string& filename);
+
+		void SetupTangents(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices);
 	};
 }
 

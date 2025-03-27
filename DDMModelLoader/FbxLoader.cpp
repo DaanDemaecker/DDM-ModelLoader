@@ -55,8 +55,6 @@ void DDM::FbxLoader::LoadModel(const std::string& path, std::vector<DDM::Vertex>
 
 	// Destroy the scene and manager
 	scene->Destroy();
-
-	SetupTangents(vertices, indices);
 }
 
 void DDM::FbxLoader::ConvertMesh(FbxMesh* pMesh,
@@ -164,41 +162,6 @@ void DDM::FbxLoader::HandleFbxVertex(FbxMesh* pMesh, FbxVector4* controlPoints, 
 	indices.push_back(uniqueVertices[vertex]);
 }
 
-void DDM::FbxLoader::SetupTangents(std::vector<DDM::Vertex>& vertices, std::vector<uint32_t>& indices)
-{
-	// After all vertices are added loop trought them to calculate the tangents
-	for (size_t i = 0; i < indices.size(); i += 3)
-	{
-		// Get the the indices of the current triangle
-		uint32_t index0 = indices[i];
-		uint32_t index1 = indices[i + 1];
-		uint32_t index2 = indices[i + 2];
-
-		// Get the vertices asociated with this triangle
-		DDM::Vertex& v0 = vertices[index0];
-		DDM::Vertex& v1 = vertices[index1];
-		DDM::Vertex& v2 = vertices[index2];
-
-		// Get 2 edges of this triangle
-		glm::vec3 edge1 = v1.pos - v0.pos;
-		glm::vec3 edge2 = v2.pos - v0.pos;
-
-		// Get the difference in UV over these edges
-		glm::vec2 deltaUV1 = v1.texCoord - v0.texCoord;
-		glm::vec2 deltaUV2 = v2.texCoord - v0.texCoord;
-
-		// Calculate the scaling factor for normalizing the vector
-		float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
-
-		// Calculate the tangent
-		glm::vec3 tangent = (edge1 * deltaUV2.y - edge2 * deltaUV1.y) * r;
-
-		// Add the tangent to the 3 vertices
-		v0.tangent += tangent;
-		v1.tangent += tangent;
-		v2.tangent += tangent;
-	}
-}
 
 void DDM::FbxLoader::SetupSkin(fbxSkinnedInfo& skinnedInfo, int controlPointAmount)
 {
