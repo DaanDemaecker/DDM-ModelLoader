@@ -6,6 +6,7 @@
 // File includes
 #include "ObjLoader.h"
 #include "FbxLoader.h"
+#include "GltfLoader.h"
 
 // Standard library includes
 #include <iostream>
@@ -20,6 +21,8 @@ DDM::ModelLoader::ModelLoader()
 	m_pObjLoader = std::make_unique<ObjLoader>();
 
 	m_pFbxLoader = std::make_unique<FbxLoader>();
+	
+	m_pGltfLoader = std::make_unique<GltfLoader>();
 }
 
 DDM::ModelLoader::~ModelLoader()
@@ -43,6 +46,10 @@ void DDM::ModelLoader::LoadModel(const std::string& path, std::vector<Vertex>& v
 		else if (extension == "fbx")
 		{
 			m_pFbxLoader->LoadModel(path, vertices, indices);
+		}
+		else if (extension == "gltf")
+		{
+			m_pGltfLoader->LoadModel(path, vertices, indices);
 		}
 		else
 		{
