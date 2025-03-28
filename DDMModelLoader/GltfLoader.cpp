@@ -6,6 +6,9 @@
 // File includes
 #include "tiny_gltf.h"
 
+// Standard library includes
+#include <iostream>
+
 DDM::GltfLoader::GltfLoader()
 {
 }
@@ -25,12 +28,12 @@ void DDM::GltfLoader::LoadModel(const std::string& path, std::vector<Vertex>& ve
 
 	if (!warn.empty())
 	{
-		throw(warn);
+        std::cout << "Warning: " << warn << std::endl;
 	}
 
 	if (!error.empty())
 	{
-		throw(error);
+        std::cout << "Error: " << error << std::endl;
 	}
 
 	if (!result)
