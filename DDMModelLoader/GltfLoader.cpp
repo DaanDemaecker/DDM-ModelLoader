@@ -86,8 +86,8 @@ void DDM::GltfLoader::LoadScene(const std::string& path, std::vector<std::vector
         modelAmount += mesh.primitives.size();
     }
 
-    verticesLists.reserve(modelAmount);
-    indicesLists.reserve(modelAmount);
+    verticesLists.resize(modelAmount);
+    indicesLists.resize(modelAmount);
 
     int currentModel{};
 
