@@ -64,6 +64,30 @@ void DDM::ModelLoader::LoadModel(const std::string& path, std::vector<Vertex>& v
 	}
 }
 
+void DDM::ModelLoader::LoadScene(const std::string& path, std::vector<std::vector<Vertex>>& verticesLists, std::vector<std::vector<uint32_t>>& indicesLists)
+{
+	auto extension = GetExtension(path);
+
+	std::transform(extension.begin(), extension.end(), extension.begin(),
+		[](unsigned char c) { return std::tolower(c); });
+
+	try
+	{
+		{
+			throw std::runtime_error(extension + " is not a supported model format");
+		}
+
+		for (int i{}; i < verticesLists.size(); ++i)
+		{
+			SetupTangents(verticesLists[i], indicesLists[i]);
+		}
+	}
+	catch (const std::exception& e)
+	{
+		std::cerr << "Exception caught: " << e.what() << std::endl;
+	}
+}
+
 std::string DDM::ModelLoader::GetExtension(const std::string& filename)
 {
 	// Get the index of the final period in the name, all characters after it indicate the extension
