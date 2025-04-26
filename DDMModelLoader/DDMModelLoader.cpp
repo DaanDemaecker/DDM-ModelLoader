@@ -73,8 +73,13 @@ void DDM::ModelLoader::LoadScene(const std::string& path, std::vector<std::vecto
 
 	try
 	{
+		if (extension == "gltf")
 		{
-			throw std::runtime_error(extension + " is not a supported model format");
+			m_pGltfLoader->LoadScene(path, verticesLists, indicesLists);
+		}
+		else
+		{
+			throw std::runtime_error(extension + " is not a supported scene format");
 		}
 
 		for (int i{}; i < verticesLists.size(); ++i)

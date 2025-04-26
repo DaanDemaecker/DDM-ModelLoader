@@ -55,6 +55,53 @@ void DDM::GltfLoader::LoadModel(const std::string& path, std::vector<Vertex>& ve
 	}
 }
 
+void DDM::GltfLoader::LoadScene(const std::string& path, std::vector<std::vector<Vertex>>& verticesLists, std::vector<std::vector<uint32_t>>& indicesLists)
+{
+    tinygltf::TinyGLTF loader;
+    std::string error;
+    std::string warn;
+    tinygltf::Model model;
+
+    bool result = loader.LoadASCIIFromFile(&model, &error, &warn, path);
+
+    if (!warn.empty())
+    {
+        std::cout << "Warning: " << warn << std::endl;
+    }
+
+    if (!error.empty())
+    {
+        std::cout << "Error: " << error << std::endl;
+    }
+
+    if (!result)
+    {
+        throw("Unable to load model");
+    }
+
+    int modelAmount{};
+
+    for (auto& mesh : model.meshes)
+    {
+        modelAmount += mesh.primitives.size();
+    }
+
+    verticesLists.reserve(modelAmount);
+    indicesLists.reserve(modelAmount);
+
+    int currentModel{};
+
+    for (auto& mesh : model.meshes)
+    {
+        for (auto& primitive : mesh.primitives)
+        {
+            ExtractVertices(model, primitive, verticesLists[currentModel]);
+            ExtractIndices(model, primitive, indicesLists[currentModel]);
+            ++currentModel;
+        }
+    }
+}
+
 void DDM::GltfLoader::ExtractVertices(const tinygltf::Model& model, const tinygltf::Primitive& primitive, std::vector<Vertex>& vertices)
 {
     // Find attributes in the primitive
