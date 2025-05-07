@@ -11,15 +11,15 @@
 #include <stdexcept>
 #include <unordered_map>
 
-DDM::ObjLoader::ObjLoader()
+DDMML::ObjLoader::ObjLoader()
 {
 }
 
-DDM::ObjLoader::~ObjLoader()
+DDMML::ObjLoader::~ObjLoader()
 {
 }
 
-void DDM::ObjLoader::LoadModel(const std::string& path, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices)
+void DDMML::ObjLoader::LoadModel(const std::string& path, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices)
 {
 	// Create needed objects to read in .obj file
 	tinyobj::attrib_t attrib{};

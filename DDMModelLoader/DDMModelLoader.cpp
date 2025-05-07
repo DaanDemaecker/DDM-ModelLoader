@@ -14,7 +14,7 @@
 #include <algorithm>
 
 
-DDM::ModelLoader::ModelLoader()
+DDMML::ModelLoader::ModelLoader()
 {
 	std::cout << "ModelLoader created \n";
 
@@ -25,12 +25,12 @@ DDM::ModelLoader::ModelLoader()
 	m_pGltfLoader = std::make_unique<GltfLoader>();
 }
 
-DDM::ModelLoader::~ModelLoader()
+DDMML::ModelLoader::~ModelLoader()
 {
 	std::cout << "ModelLoader destroyed \n";
 }
 
-void DDM::ModelLoader::LoadModel(const std::string& path, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices)
+void DDMML::ModelLoader::LoadModel(const std::string& path, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices)
 {
 	auto extension = GetExtension(path);
 
@@ -64,7 +64,7 @@ void DDM::ModelLoader::LoadModel(const std::string& path, std::vector<Vertex>& v
 	}
 }
 
-void DDM::ModelLoader::LoadScene(const std::string& path, std::vector<std::vector<Vertex>>& verticesLists, std::vector<std::vector<uint32_t>>& indicesLists)
+void DDMML::ModelLoader::LoadScene(const std::string& path, std::vector<std::vector<Vertex>>& verticesLists, std::vector<std::vector<uint32_t>>& indicesLists)
 {
 	auto extension = GetExtension(path);
 
@@ -93,7 +93,7 @@ void DDM::ModelLoader::LoadScene(const std::string& path, std::vector<std::vecto
 	}
 }
 
-std::string DDM::ModelLoader::GetExtension(const std::string& filename)
+std::string DDMML::ModelLoader::GetExtension(const std::string& filename)
 {
 	// Get the index of the final period in the name, all characters after it indicate the extension
 	auto index = filename.find_last_of(".");
@@ -101,7 +101,7 @@ std::string DDM::ModelLoader::GetExtension(const std::string& filename)
 	return  filename.substr(index + 1, filename.size());
 }
 
-void DDM::ModelLoader::SetupTangents(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices)
+void DDMML::ModelLoader::SetupTangents(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices)
 {
 	// After all vertices are added loop through them to calculate the tangents
 	for (size_t i = 0; i < indices.size(); i += 3)

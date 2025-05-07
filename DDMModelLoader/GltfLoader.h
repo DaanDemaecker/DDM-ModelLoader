@@ -18,7 +18,7 @@ namespace tinygltf
 	class Primitive;
 }
 
-namespace DDM
+namespace DDMML
 {
 	class GltfLoader final
 	{

@@ -8,7 +8,7 @@
 #include <array>
 #include <string>
 
-namespace DDM
+namespace DDMML
 {
 	struct Vertex
 	{
@@ -47,9 +47,9 @@ namespace std
 		}
 	};
 
-	template<> struct hash<DDM::Vertex>
+	template<> struct hash<DDMML::Vertex>
 	{
-		size_t operator()(const DDM::Vertex& vertex) const
+		size_t operator()(const DDMML::Vertex& vertex) const
 		{
 			size_t seed = 0;
 			seed ^= hash<glm::vec3>()(vertex.pos) + 0x9e3779b9 + (seed << 6) + (seed >> 2);

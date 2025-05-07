@@ -14,7 +14,7 @@
 #include <vector>
 #include <memory>
 
-namespace DDM
+namespace DDMML
 {
 	class ObjLoader;
 	class FbxLoader;

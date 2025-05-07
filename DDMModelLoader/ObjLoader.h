@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 
-namespace DDM
+namespace DDMML
 {
 	class ObjLoader final
 	{

@@ -6,7 +6,7 @@
 // Standard library includes
 #include <iostream>
 
-DDM::FbxLoader::FbxLoader()
+DDMML::FbxLoader::FbxLoader()
 {
 	// Initialize the FBX SDK
 	m_pFbxManager = FbxManager::Create();
@@ -14,12 +14,12 @@ DDM::FbxLoader::FbxLoader()
 	m_pFbxManager->SetIOSettings(ios);
 }
 
-DDM::FbxLoader::~FbxLoader()
+DDMML::FbxLoader::~FbxLoader()
 {
 	m_pFbxManager->Destroy();
 }
 
-void DDM::FbxLoader::LoadModel(const std::string& path, std::vector<DDM::Vertex>& vertices, std::vector<uint32_t>& indices)
+void DDMML::FbxLoader::LoadModel(const std::string& path, std::vector<DDMML::Vertex>& vertices, std::vector<uint32_t>& indices)
 {
 	FbxScene* scene = LoadScene(path);
 
@@ -33,7 +33,7 @@ void DDM::FbxLoader::LoadModel(const std::string& path, std::vector<DDM::Vertex>
 
 
 	// Create map to store vertices
-	std::unordered_map<DDM::Vertex, uint32_t> uniqueVertices{};
+	std::unordered_map<DDMML::Vertex, uint32_t> uniqueVertices{};
 
 	// Traverse the scene to find nodes containing the car model
 	FbxNode* root = scene->GetRootNode();
@@ -57,8 +57,8 @@ void DDM::FbxLoader::LoadModel(const std::string& path, std::vector<DDM::Vertex>
 	scene->Destroy();
 }
 
-void DDM::FbxLoader::ConvertMesh(FbxMesh* pMesh,
-	std::unordered_map<DDM::Vertex, uint32_t>& uniqueVertices, std::vector<DDM::Vertex>& vertices,
+void DDMML::FbxLoader::ConvertMesh(FbxMesh* pMesh,
+	std::unordered_map<DDMML::Vertex, uint32_t>& uniqueVertices, std::vector<DDMML::Vertex>& vertices,
 	std::vector<uint32_t>& indices, int& baseUvIndex)
 {
 	int numPolygons = pMesh->GetPolygonCount();
@@ -110,10 +110,10 @@ void DDM::FbxLoader::ConvertMesh(FbxMesh* pMesh,
 	baseUvIndex = nextBaseUvIndex;
 }
 
-void DDM::FbxLoader::HandleFbxVertex(FbxMesh* pMesh, FbxVector4* controlPoints, int polygonIndex, int inPolygonPosition,
-	std::unordered_map<DDM::Vertex, uint32_t>& uniqueVertices,
+void DDMML::FbxLoader::HandleFbxVertex(FbxMesh* pMesh, FbxVector4* controlPoints, int polygonIndex, int inPolygonPosition,
+	std::unordered_map<DDMML::Vertex, uint32_t>& uniqueVertices,
 	fbxTexturedInfo& textureInfo, fbxSkinnedInfo& skinnedInfo,
-	std::vector<DDM::Vertex>& vertices, std::vector<uint32_t>& indices)
+	std::vector<DDMML::Vertex>& vertices, std::vector<uint32_t>& indices)
 {
 	int vertexIndex = pMesh->GetPolygonVertex(polygonIndex, inPolygonPosition);
 
@@ -124,7 +124,7 @@ void DDM::FbxLoader::HandleFbxVertex(FbxMesh* pMesh, FbxVector4* controlPoints, 
 
 	pMesh->GetPolygonVertexNormal(polygonIndex, inPolygonPosition, normal);
 
-	DDM::Vertex vertex{};
+	DDMML::Vertex vertex{};
 
 	if (textureInfo.textured)
 	{
@@ -163,7 +163,7 @@ void DDM::FbxLoader::HandleFbxVertex(FbxMesh* pMesh, FbxVector4* controlPoints, 
 }
 
 
-void DDM::FbxLoader::SetupSkin(fbxSkinnedInfo& skinnedInfo, int controlPointAmount)
+void DDMML::FbxLoader::SetupSkin(fbxSkinnedInfo& skinnedInfo, int controlPointAmount)
 {
 	skinnedInfo.boneInfos.resize(controlPointAmount);
 
@@ -182,7 +182,7 @@ void DDM::FbxLoader::SetupSkin(fbxSkinnedInfo& skinnedInfo, int controlPointAmou
 	}
 }
 
-FbxScene* DDM::FbxLoader::LoadScene(const std::string& path)
+FbxScene* DDMML::FbxLoader::LoadScene(const std::string& path)
 {
 	auto pFbxImporter = FbxImporter::Create(m_pFbxManager, "importer");
 	// Import the FBX file

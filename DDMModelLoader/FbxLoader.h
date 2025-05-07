@@ -13,7 +13,7 @@
 #include <unordered_map>
 #include <memory>
 
-namespace DDM
+namespace DDMML
 {
 	class FbxLoader
 	{
@@ -27,7 +27,7 @@ namespace DDM
 		//     - path: The path to the model file
 		//     - vertices: The vector that will be used to store the vertices
 		//     - indices: The vector that will be used to store the indices
-		void LoadModel(const std::string& path, std::vector<DDM::Vertex>& vertices, std::vector<uint32_t>& indices);
+		void LoadModel(const std::string& path, std::vector<DDMML::Vertex>& vertices, std::vector<uint32_t>& indices);
 	private:
 
 		FbxManager* m_pFbxManager{};
@@ -65,13 +65,13 @@ namespace DDM
 		};
 
 		void ConvertMesh(FbxMesh* pMesh,
-			std::unordered_map<DDM::Vertex, uint32_t>& uniqueVertices, std::vector<DDM::Vertex>& vertices,
+			std::unordered_map<DDMML::Vertex, uint32_t>& uniqueVertices, std::vector<DDMML::Vertex>& vertices,
 			std::vector<uint32_t>& indices, int& baseUvIndex);
 
 		void HandleFbxVertex(FbxMesh* pMesh, FbxVector4* controlPoints, int polygonIndex, int inPolygonPosition,
-			std::unordered_map<DDM::Vertex, uint32_t>& uniqueVerticesint,
+			std::unordered_map<DDMML::Vertex, uint32_t>& uniqueVerticesint,
 			fbxTexturedInfo& textureInfo, fbxSkinnedInfo& skinnedInfo,
-			std::vector<DDM::Vertex>& vertices, std::vector<uint32_t>& indices);
+			std::vector<DDMML::Vertex>& vertices, std::vector<uint32_t>& indices);
 
 		void SetupSkin(fbxSkinnedInfo& skinnedInfo, int controlPointAmount);
 

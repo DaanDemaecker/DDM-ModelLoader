@@ -11,15 +11,15 @@
 // Standard library includes
 #include <iostream>
 
-DDM::GltfLoader::GltfLoader()
+DDMML::GltfLoader::GltfLoader()
 {
 }
 
-DDM::GltfLoader::~GltfLoader()
+DDMML::GltfLoader::~GltfLoader()
 {
 }
 
-void DDM::GltfLoader::LoadModel(const std::string& path, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices)
+void DDMML::GltfLoader::LoadModel(const std::string& path, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices)
 {
 	tinygltf::TinyGLTF loader;
 	std::string error;
@@ -55,7 +55,7 @@ void DDM::GltfLoader::LoadModel(const std::string& path, std::vector<Vertex>& ve
 	}
 }
 
-void DDM::GltfLoader::LoadScene(const std::string& path, std::vector<std::vector<Vertex>>& verticesLists, std::vector<std::vector<uint32_t>>& indicesLists)
+void DDMML::GltfLoader::LoadScene(const std::string& path, std::vector<std::vector<Vertex>>& verticesLists, std::vector<std::vector<uint32_t>>& indicesLists)
 {
     tinygltf::TinyGLTF loader;
     std::string error;
@@ -102,7 +102,7 @@ void DDM::GltfLoader::LoadScene(const std::string& path, std::vector<std::vector
     }
 }
 
-void DDM::GltfLoader::ExtractVertices(const tinygltf::Model& model, const tinygltf::Primitive& primitive, std::vector<Vertex>& vertices)
+void DDMML::GltfLoader::ExtractVertices(const tinygltf::Model& model, const tinygltf::Primitive& primitive, std::vector<Vertex>& vertices)
 {
     // Find attributes in the primitive
     auto posIt = primitive.attributes.find("POSITION");
@@ -163,7 +163,7 @@ void DDM::GltfLoader::ExtractVertices(const tinygltf::Model& model, const tinygl
     }
 }
 
-void DDM::GltfLoader::ExtractIndices(const tinygltf::Model& model, const tinygltf::Primitive& primitive, std::vector<uint32_t>& indices)
+void DDMML::GltfLoader::ExtractIndices(const tinygltf::Model& model, const tinygltf::Primitive& primitive, std::vector<uint32_t>& indices)
 {
     if (primitive.indices < 0) return; // No indices
 
