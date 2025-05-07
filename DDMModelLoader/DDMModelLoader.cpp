@@ -135,7 +135,7 @@ std::string DDMML::ModelLoader::GetPath(const std::string& filename)
 {
 	auto index = filename.find_last_of("/");
 
-	return filename.substr(0, index);
+	return filename.substr(0, index + 1);
 }
 
 void DDMML::ModelLoader::SetupTangents(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices)
