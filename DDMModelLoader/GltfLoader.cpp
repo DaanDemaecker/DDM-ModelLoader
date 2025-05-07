@@ -110,7 +110,7 @@ void DDMML::GltfLoader::LoadScene(const std::string& filename, const std::string
     std::string warn;
     tinygltf::Model model;
 
-    bool result = loader.LoadASCIIFromFile(&model, &error, &warn, path);
+    bool result = loader.LoadASCIIFromFile(&model, &error, &warn, filename);
 
     if (!warn.empty())
     {
