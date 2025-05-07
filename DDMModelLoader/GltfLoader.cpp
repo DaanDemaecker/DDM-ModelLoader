@@ -264,7 +264,12 @@ void DDMML::GltfLoader::ExtractDiffuseTextures(const tinygltf::Model& model, con
 
 	auto& mat = model.materials[materialIndex];
 
-	model.textures[materialIndex].name;
+    int texIdx = mat.pbrMetallicRoughness.baseColorTexture.index;
 
-	mesh.GetDiffuseTextureNames().push_back(model.textures[materialIndex].name);
+	if (texIdx < 0) return; // No texture
+
+	const tinygltf::Texture& text = model.textures[texIdx];
+	const tinygltf::Image& img = model.images[text.source];	
+
+	mesh.GetDiffuseTextureNames().push_back(img.uri);
 }
