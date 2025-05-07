@@ -77,7 +77,7 @@ namespace DDMML
 			return m_NormalTextureNames;
 		}
 
-	public:
+	private:
 		// The vertices and of the mesh
 		std::vector<Vertex> m_Vertices{};
 		std::vector<uint32_t> m_Indices{};
