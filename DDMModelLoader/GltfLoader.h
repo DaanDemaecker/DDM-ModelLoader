@@ -51,10 +51,11 @@ namespace DDMML
 		/// <summary>
 		/// Loads in a scene given a file path
 		/// <params>
-		///	- path: The path to the scene file
+		///	- filename: The name of the scene file
+		/// -path: The path to the folder holding the scene file
 		/// - meshes: A vector of meshes, each mesh will be filled with the vertices and indices for a single model
 		/// </summary>
-		void LoadScene(const std::string& path, std::vector<Mesh>& meshes);
+		void LoadScene(const std::string& fileName, const std::string& path, std::vector<Mesh>& meshes);
 
 	public:
 		void ExtractVertices(const tinygltf::Model& model, const tinygltf::Primitive& primitive, std::vector<Vertex>& vertices);
@@ -62,9 +63,9 @@ namespace DDMML
 
 		void ExtractIndices(const tinygltf::Model& model, const tinygltf::Primitive& primitive, std::vector<uint32_t>& indices);
 	
-		void LoadModel(const tinygltf::Model& model, const tinygltf::Primitive& ptimitive, Mesh& mesh);
+		void LoadModel(const tinygltf::Model& model, const tinygltf::Primitive& ptimitive, const std::string& path, Mesh& mesh);
 
-		void ExtractDiffuseTextures(const tinygltf::Model& model, const tinygltf::Primitive& primitive, Mesh& mesh);
+		void ExtractDiffuseTextures(const tinygltf::Model& model, const tinygltf::Primitive& primitive, const std::string& path, Mesh& mesh);
 	};
 }
 

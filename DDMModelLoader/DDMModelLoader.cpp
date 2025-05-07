@@ -93,17 +93,20 @@ void DDMML::ModelLoader::LoadScene(const std::string& path, std::vector<std::vec
 	}
 }
 
-void DDMML::ModelLoader::LoadScene(const std::string& path, std::vector<Mesh>& meshes)
+void DDMML::ModelLoader::LoadScene(const std::string& fileName, std::vector<Mesh>& meshes)
 {
 
-auto extension = GetExtension(path);
+auto extension = GetExtension(fileName);
 std::transform(extension.begin(), extension.end(), extension.begin(),
 	[](unsigned char c) { return std::tolower(c); });
+
+auto path = GetPath(fileName);
+
 try
 {
 	if (extension == "gltf")
 	{
-		m_pGltfLoader->LoadScene(path, meshes);
+		m_pGltfLoader->LoadScene(fileName, path, meshes);
 	}
 	else
 	{
@@ -126,6 +129,13 @@ std::string DDMML::ModelLoader::GetExtension(const std::string& filename)
 	auto index = filename.find_last_of(".");
 
 	return  filename.substr(index + 1, filename.size());
+}
+
+std::string DDMML::ModelLoader::GetPath(const std::string& filename)
+{
+	auto index = filename.find_last_of("/");
+
+	return filename.substr(0, index);
 }
 
 void DDMML::ModelLoader::SetupTangents(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices)

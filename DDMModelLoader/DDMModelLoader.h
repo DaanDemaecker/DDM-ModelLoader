@@ -66,6 +66,8 @@ namespace DDMML
 
 		std::string GetExtension(const std::string& filename);
 
+		std::string GetPath(const std::string& filename);
+
 		void SetupTangents(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices);
 	};
 }

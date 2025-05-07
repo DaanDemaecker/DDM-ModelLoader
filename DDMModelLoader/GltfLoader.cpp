@@ -103,7 +103,7 @@ void DDMML::GltfLoader::LoadScene(const std::string& path, std::vector<std::vect
     }
 }
 
-void DDMML::GltfLoader::LoadScene(const std::string& path, std::vector<Mesh>& meshes)
+void DDMML::GltfLoader::LoadScene(const std::string& filename, const std::string& path, std::vector<Mesh>& meshes)
 {
     tinygltf::TinyGLTF loader;
     std::string error;
@@ -143,7 +143,7 @@ void DDMML::GltfLoader::LoadScene(const std::string& path, std::vector<Mesh>& me
     {
         for (auto& primitive : mesh.primitives)
         {
-            LoadModel(model, primitive, meshes[currentModel]);
+            LoadModel(model, primitive, path, meshes[currentModel]);
             ++currentModel;
         }
     }
@@ -241,7 +241,7 @@ void DDMML::GltfLoader::ExtractIndices(const tinygltf::Model& model, const tinyg
     }
 }
 
-void DDMML::GltfLoader::LoadModel(const tinygltf::Model& model, const tinygltf::Primitive& ptimitive, DDMML::Mesh& mesh)
+void DDMML::GltfLoader::LoadModel(const tinygltf::Model& model, const tinygltf::Primitive& ptimitive, const std::string& path, DDMML::Mesh& mesh)
 {
     // Get the vertices and indices attributes and extract them from the gltf model
 	auto& vertices = mesh.GetVertices();
@@ -251,12 +251,12 @@ void DDMML::GltfLoader::LoadModel(const tinygltf::Model& model, const tinygltf::
 	ExtractIndices(model, ptimitive, indices);
 
 	// Extract diffuse textures
-	ExtractDiffuseTextures(model, ptimitive, mesh);
+	ExtractDiffuseTextures(model, ptimitive, path, mesh);
 
 
 }
 
-void DDMML::GltfLoader::ExtractDiffuseTextures(const tinygltf::Model& model, const tinygltf::Primitive& primitive, Mesh& mesh)
+void DDMML::GltfLoader::ExtractDiffuseTextures(const tinygltf::Model& model, const tinygltf::Primitive& primitive, const std::string& path, Mesh& mesh)
 {
 	auto& materialIndex = primitive.material;
 
@@ -271,5 +271,5 @@ void DDMML::GltfLoader::ExtractDiffuseTextures(const tinygltf::Model& model, con
 	const tinygltf::Texture& text = model.textures[texIdx];
 	const tinygltf::Image& img = model.images[text.source];	
 
-	mesh.GetDiffuseTextureNames().push_back(img.uri);
+	mesh.GetDiffuseTextureNames().push_back(path + img.uri);
 }
