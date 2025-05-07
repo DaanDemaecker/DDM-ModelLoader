@@ -7,6 +7,7 @@
 //#define TINYGLTF_NO_STB_IMAGE
 //#define TINYGLTF_NO_STB_IMAGE_WRITE
 #include "tiny_gltf.h"
+#include "Mesh.h"
 
 // Standard library includes
 #include <iostream>
@@ -83,7 +84,7 @@ void DDMML::GltfLoader::LoadScene(const std::string& path, std::vector<std::vect
 
     for (auto& mesh : model.meshes)
     {
-        modelAmount += mesh.primitives.size();
+        modelAmount += static_cast<int>(mesh.primitives.size());
     }
 
     verticesLists.resize(modelAmount);
@@ -97,6 +98,52 @@ void DDMML::GltfLoader::LoadScene(const std::string& path, std::vector<std::vect
         {
             ExtractVertices(model, primitive, verticesLists[currentModel]);
             ExtractIndices(model, primitive, indicesLists[currentModel]);
+            ++currentModel;
+        }
+    }
+}
+
+void DDMML::GltfLoader::LoadScene(const std::string& path, std::vector<Mesh>& meshes)
+{
+    tinygltf::TinyGLTF loader;
+    std::string error;
+    std::string warn;
+    tinygltf::Model model;
+
+    bool result = loader.LoadASCIIFromFile(&model, &error, &warn, path);
+
+    if (!warn.empty())
+    {
+        std::cout << "Warning: " << warn << std::endl;
+    }
+
+    if (!error.empty())
+    {
+        std::cout << "Error: " << error << std::endl;
+    }
+
+    if (!result)
+    {
+        throw("Unable to load model");
+    }
+
+    int modelAmount{};
+
+    for (auto& mesh : model.meshes)
+    {
+        modelAmount += static_cast<int>(mesh.primitives.size());
+    }
+
+    
+    meshes.resize(modelAmount);
+
+    int currentModel{};
+
+    for (auto& mesh : model.meshes)
+    {
+        for (auto& primitive : mesh.primitives)
+        {
+            LoadModel(model, primitive, meshes[currentModel]);
             ++currentModel;
         }
     }
@@ -192,4 +239,32 @@ void DDMML::GltfLoader::ExtractIndices(const tinygltf::Model& model, const tinyg
             indices.push_back(static_cast<uint32_t>(data[i]));  // Convert uint8_t to uint32_t
         }
     }
+}
+
+void DDMML::GltfLoader::LoadModel(const tinygltf::Model& model, const tinygltf::Primitive& ptimitive, DDMML::Mesh& mesh)
+{
+    // Get the vertices and indices attributes and extract them from the gltf model
+	auto& vertices = mesh.GetVertices();
+	auto& indices = mesh.GetIndices();
+
+	ExtractVertices(model, ptimitive, vertices);
+	ExtractIndices(model, ptimitive, indices);
+
+	// Extract diffuse textures
+	ExtractDiffuseTextures(model, ptimitive, mesh);
+
+
+}
+
+void DDMML::GltfLoader::ExtractDiffuseTextures(const tinygltf::Model& model, const tinygltf::Primitive& primitive, Mesh& mesh)
+{
+	auto& materialIndex = primitive.material;
+
+	if (materialIndex < 0) return; // No material
+
+	auto& mat = model.materials[materialIndex];
+
+	model.textures[materialIndex].name;
+
+	mesh.GetDiffuseTextureNames().push_back(model.textures[materialIndex].name);
 }

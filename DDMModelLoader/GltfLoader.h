@@ -15,11 +15,13 @@
 namespace tinygltf
 {
 	class Model;
-	class Primitive;
+	struct Primitive;
 }
 
 namespace DDMML
 {
+	class Mesh;
+
 	class GltfLoader final
 	{
 	public:
@@ -46,12 +48,23 @@ namespace DDMML
 		//		- indicesLists: A list of vectors of indicees, each vector will be filled with the indices for a single model
 		void LoadScene(const std::string& path, std::vector<std::vector<Vertex>>& verticesLists, std::vector<std::vector<uint32_t>>& indicesLists);
 
+		/// <summary>
+		/// Loads in a scene given a file path
+		/// <params>
+		///	- path: The path to the scene file
+		/// - meshes: A vector of meshes, each mesh will be filled with the vertices and indices for a single model
+		/// </summary>
+		void LoadScene(const std::string& path, std::vector<Mesh>& meshes);
 
 	public:
 		void ExtractVertices(const tinygltf::Model& model, const tinygltf::Primitive& primitive, std::vector<Vertex>& vertices);
 
 
 		void ExtractIndices(const tinygltf::Model& model, const tinygltf::Primitive& primitive, std::vector<uint32_t>& indices);
+	
+		void LoadModel(const tinygltf::Model& model, const tinygltf::Primitive& ptimitive, Mesh& mesh);
+
+		void ExtractDiffuseTextures(const tinygltf::Model& model, const tinygltf::Primitive& primitive, Mesh& mesh);
 	};
 }
 

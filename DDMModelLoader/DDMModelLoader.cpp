@@ -93,6 +93,33 @@ void DDMML::ModelLoader::LoadScene(const std::string& path, std::vector<std::vec
 	}
 }
 
+void DDMML::ModelLoader::LoadScene(const std::string& path, std::vector<Mesh>& meshes)
+{
+
+auto extension = GetExtension(path);
+std::transform(extension.begin(), extension.end(), extension.begin(),
+	[](unsigned char c) { return std::tolower(c); });
+try
+{
+	if (extension == "gltf")
+	{
+		m_pGltfLoader->LoadScene(path, meshes);
+	}
+	else
+	{
+		throw std::runtime_error(extension + " is not a supported scene format");
+	}
+	for (int i{}; i < meshes.size(); ++i)
+	{
+		SetupTangents(meshes[i].GetVertices(), meshes[i].GetIndices());
+	}
+}
+catch (const std::exception& e)
+{
+	std::cerr << "Exception caught: " << e.what() << std::endl;
+}
+}
+
 std::string DDMML::ModelLoader::GetExtension(const std::string& filename)
 {
 	// Get the index of the final period in the name, all characters after it indicate the extension
