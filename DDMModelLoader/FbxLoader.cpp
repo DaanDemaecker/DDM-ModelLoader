@@ -79,18 +79,8 @@ void DDMML::FbxLoader::LoadScene(const std::string& fileName, const std::string&
 		for (int i = 0; i < root->GetChildCount(); i++)
 		{
 			FbxNode* child = root->GetChild(i);
-			// Check if the node contains mesh data
-			if (child->GetNodeAttribute() && child->GetNodeAttribute()->GetAttributeType() == FbxNodeAttribute::eMesh)
-			{
-				// Extract mesh data
-				FbxMesh* mesh = child->GetMesh();
-
-				DDMML::Mesh currentMesh{};
-
-				ConvertMesh(mesh, path, currentMesh, baseUvIndex);
-
-				meshes.emplace_back(std::move(currentMesh));
-			}
+			
+			HandleChild(child, path, meshes);
 		}
 	}
 
@@ -292,5 +282,28 @@ FbxScene* DDMML::FbxLoader::LoadScene(const std::string& path)
 	pFbxImporter->Destroy();
 
 	return scene;
+}
+
+void DDMML::FbxLoader::HandleChild(FbxNode* child, const std::string& path, std::vector<DDMML::Mesh>& meshes)
+{
+	for (int i{}; i < child->GetChildCount(); ++i)
+	{
+		HandleChild(child->GetChild(i), path, meshes);
+	}
+
+	int baseUvIndex{};
+
+	// Check if the node contains mesh data
+	if (child->GetNodeAttribute() && child->GetNodeAttribute()->GetAttributeType() == FbxNodeAttribute::eMesh)
+	{
+		// Extract mesh data
+		FbxMesh* mesh = child->GetMesh();
+
+		DDMML::Mesh currentMesh{};
+
+		ConvertMesh(mesh, path, currentMesh, baseUvIndex);
+
+		meshes.emplace_back(std::move(currentMesh));
+	}
 }
 

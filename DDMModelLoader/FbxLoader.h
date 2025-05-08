@@ -89,6 +89,8 @@ namespace DDMML
 		void SetupSkin(fbxSkinnedInfo& skinnedInfo, int controlPointAmount);
 
 		FbxScene* LoadScene(const std::string& path);
+
+		void HandleChild(FbxNode* child, const std::string& path, std::vector<DDMML::Mesh>& meshes);
 	};
 }
 
