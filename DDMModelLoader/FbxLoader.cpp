@@ -2,6 +2,7 @@
 
 // File includes
 #include "FbxLoader.h"
+#include "Mesh.h"
 
 // Standard library includes
 #include <iostream>
@@ -57,6 +58,46 @@ void DDMML::FbxLoader::LoadModel(const std::string& path, std::vector<DDMML::Ver
 	scene->Destroy();
 }
 
+void DDMML::FbxLoader::LoadScene(const std::string& fileName, const std::string& path, std::vector<DDMML::Mesh>& meshes)
+{
+	FbxScene* scene = LoadScene(fileName);
+
+	if (!scene)
+	{
+		throw std::runtime_error(fileName + " is not a valid file path");
+	}	
+
+
+	int baseUvIndex{};
+
+	// Traverse the scene to find nodes containing the car model
+	FbxNode* root = scene->GetRootNode();
+	if (root)
+	{
+		meshes.reserve(root->GetChildCount());
+
+		for (int i = 0; i < root->GetChildCount(); i++)
+		{
+			FbxNode* child = root->GetChild(i);
+			// Check if the node contains mesh data
+			if (child->GetNodeAttribute() && child->GetNodeAttribute()->GetAttributeType() == FbxNodeAttribute::eMesh)
+			{
+				// Extract mesh data
+				FbxMesh* mesh = child->GetMesh();
+
+				DDMML::Mesh currentMesh{};
+
+				ConvertMesh(mesh, path, currentMesh, baseUvIndex);
+
+				meshes.emplace_back(std::move(currentMesh));
+			}
+		}
+	}
+
+	// Destroy the scene and manager
+	scene->Destroy();
+}
+
 void DDMML::FbxLoader::ConvertMesh(FbxMesh* pMesh,
 	std::unordered_map<DDMML::Vertex, uint32_t>& uniqueVertices, std::vector<DDMML::Vertex>& vertices,
 	std::vector<uint32_t>& indices, int& baseUvIndex)
@@ -78,7 +119,7 @@ void DDMML::FbxLoader::ConvertMesh(FbxMesh* pMesh,
 		SetupSkin(skinnedInfo, pMesh->GetControlPointsCount());
 	}
 
-	int nextBaseUvIndex{ baseUvIndex };;
+	int nextBaseUvIndex{ baseUvIndex };
 
 	fbxTexturedInfo texturedInfo{};
 	texturedInfo.textured = static_cast<bool>(pMesh->GetElementMaterialCount());
@@ -108,6 +149,59 @@ void DDMML::FbxLoader::ConvertMesh(FbxMesh* pMesh,
 	}
 
 	baseUvIndex = nextBaseUvIndex;
+}
+
+void DDMML::FbxLoader::ConvertMesh(FbxMesh* pMesh, const std::string& path, Mesh& mesh, int& baseUvIndex)
+{
+	int numPolygons = pMesh->GetPolygonCount();
+
+	if (numPolygons == 0)return;
+
+	FbxVector4* controlPoints = pMesh->GetControlPoints();
+	pMesh->GenerateNormals();
+	pMesh->GenerateTangentsData();
+
+	fbxSkinnedInfo skinnedInfo{};
+	skinnedInfo.isSkinned = static_cast<bool>(pMesh->GetDeformerCount());
+
+	if (skinnedInfo.isSkinned)
+	{
+		skinnedInfo.pSkin = static_cast<FbxSkin*>(pMesh->GetDeformer(0, FbxDeformer::eSkin));
+		SetupSkin(skinnedInfo, pMesh->GetControlPointsCount());
+	}
+
+
+	int nextBaseUvIndex{ baseUvIndex };
+
+	fbxTexturedInfo texturedInfo{};
+	texturedInfo.textured = static_cast<bool>(pMesh->GetElementMaterialCount());
+	pMesh->GetUVSetNames(texturedInfo.uvSets);
+	texturedInfo.uvSetsCount = texturedInfo.uvSets.GetCount();
+
+	// Create map to store vertices
+	std::unordered_map<DDMML::Vertex, uint32_t> uniqueVertices{};
+
+	for (int polygonIndex = 0; polygonIndex < numPolygons; ++polygonIndex)
+	{
+		auto polygonSize = pMesh->GetPolygonSize(polygonIndex);
+
+		for (int i = 1; i <= polygonSize - 2; i++)
+		{
+			if (texturedInfo.textured)
+			{
+				texturedInfo.uvIndex = pMesh->GetElementMaterial()->GetIndexArray().GetAt(polygonIndex) + baseUvIndex;
+			}
+
+			if (texturedInfo.uvIndex >= nextBaseUvIndex)
+			{
+				nextBaseUvIndex = texturedInfo.uvIndex + 1;
+			}
+
+			HandleFbxVertex(pMesh, controlPoints, polygonIndex, 0, uniqueVertices, texturedInfo, skinnedInfo, mesh.GetVertices(), mesh.GetIndices());
+			HandleFbxVertex(pMesh, controlPoints, polygonIndex, i, uniqueVertices, texturedInfo, skinnedInfo, mesh.GetVertices(), mesh.GetIndices());
+			HandleFbxVertex(pMesh, controlPoints, polygonIndex, i + 1, uniqueVertices, texturedInfo, skinnedInfo, mesh.GetVertices(), mesh.GetIndices());
+		}
+	}
 }
 
 void DDMML::FbxLoader::HandleFbxVertex(FbxMesh* pMesh, FbxVector4* controlPoints, int polygonIndex, int inPolygonPosition,

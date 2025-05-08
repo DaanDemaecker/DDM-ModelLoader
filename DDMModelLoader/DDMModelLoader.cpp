@@ -108,6 +108,10 @@ try
 	{
 		m_pGltfLoader->LoadScene(fileName, path, meshes);
 	}
+	if (extension == "fbx")
+	{
+		m_pFbxLoader->LoadScene(fileName, path, meshes);
+	}
 	else
 	{
 		throw std::runtime_error(extension + " is not a supported scene format");

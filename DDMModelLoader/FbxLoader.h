@@ -15,6 +15,8 @@
 
 namespace DDMML
 {
+	class Mesh;
+
 	class FbxLoader
 	{
 	public:
@@ -28,6 +30,15 @@ namespace DDMML
 		//     - vertices: The vector that will be used to store the vertices
 		//     - indices: The vector that will be used to store the indices
 		void LoadModel(const std::string& path, std::vector<DDMML::Vertex>& vertices, std::vector<uint32_t>& indices);
+
+		/// <summary>
+		/// Loads in a scene given a file path
+		/// <params>
+		///	- filename: The name of the scene file
+		/// -path: The path to the folder holding the scene file
+		/// - meshes: A vector of meshes, each mesh will be filled with the vertices and indices for a single model
+		/// </summary>
+		void LoadScene(const std::string& fileName, const std::string& path, std::vector<Mesh>& meshes);
 	private:
 
 		FbxManager* m_pFbxManager{};
@@ -67,6 +78,8 @@ namespace DDMML
 		void ConvertMesh(FbxMesh* pMesh,
 			std::unordered_map<DDMML::Vertex, uint32_t>& uniqueVertices, std::vector<DDMML::Vertex>& vertices,
 			std::vector<uint32_t>& indices, int& baseUvIndex);
+
+		void ConvertMesh(FbxMesh* pMesh, const std::string& path, Mesh& meshes, int& baseUvIndex);
 
 		void HandleFbxVertex(FbxMesh* pMesh, FbxVector4* controlPoints, int polygonIndex, int inPolygonPosition,
 			std::unordered_map<DDMML::Vertex, uint32_t>& uniqueVerticesint,
