@@ -91,6 +91,8 @@ namespace DDMML
 		FbxScene* LoadScene(const std::string& path);
 
 		void HandleChild(FbxNode* child, const std::string& path, std::vector<DDMML::Mesh>& meshes);
+
+		std::string ExtractDiffuseTexture(FbxMesh* fbxMesh);
 	};
 }
 

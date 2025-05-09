@@ -141,45 +141,48 @@ void DDMML::FbxLoader::ConvertMesh(FbxMesh* pMesh,
 	baseUvIndex = nextBaseUvIndex;
 }
 
-void DDMML::FbxLoader::ConvertMesh(FbxMesh* pMesh, const std::string& path, Mesh& mesh, int& baseUvIndex)
+void DDMML::FbxLoader::ConvertMesh(FbxMesh* pFbxMesh, const std::string& path, Mesh& mesh, int& baseUvIndex)
 {
-	int numPolygons = pMesh->GetPolygonCount();
+	int numPolygons = pFbxMesh->GetPolygonCount();
 
 	if (numPolygons == 0)return;
 
-	FbxVector4* controlPoints = pMesh->GetControlPoints();
-	pMesh->GenerateNormals();
-	pMesh->GenerateTangentsData();
+	FbxVector4* controlPoints = pFbxMesh->GetControlPoints();
+	pFbxMesh->GenerateNormals();
+	pFbxMesh->GenerateTangentsData();
 
 	fbxSkinnedInfo skinnedInfo{};
-	skinnedInfo.isSkinned = static_cast<bool>(pMesh->GetDeformerCount());
+	skinnedInfo.isSkinned = static_cast<bool>(pFbxMesh->GetDeformerCount());
 
 	if (skinnedInfo.isSkinned)
 	{
-		skinnedInfo.pSkin = static_cast<FbxSkin*>(pMesh->GetDeformer(0, FbxDeformer::eSkin));
-		SetupSkin(skinnedInfo, pMesh->GetControlPointsCount());
+		skinnedInfo.pSkin = static_cast<FbxSkin*>(pFbxMesh->GetDeformer(0, FbxDeformer::eSkin));
+		SetupSkin(skinnedInfo, pFbxMesh->GetControlPointsCount());
 	}
 
 
 	int nextBaseUvIndex{ baseUvIndex };
 
 	fbxTexturedInfo texturedInfo{};
-	texturedInfo.textured = static_cast<bool>(pMesh->GetElementMaterialCount());
-	pMesh->GetUVSetNames(texturedInfo.uvSets);
+	texturedInfo.textured = static_cast<bool>(pFbxMesh->GetElementMaterialCount());
+	pFbxMesh->GetUVSetNames(texturedInfo.uvSets);
 	texturedInfo.uvSetsCount = texturedInfo.uvSets.GetCount();
+
+	auto texture = pFbxMesh->GetElementMaterial()->eTextureDiffuse;
+	
 
 	// Create map to store vertices
 	std::unordered_map<DDMML::Vertex, uint32_t> uniqueVertices{};
 
 	for (int polygonIndex = 0; polygonIndex < numPolygons; ++polygonIndex)
 	{
-		auto polygonSize = pMesh->GetPolygonSize(polygonIndex);
+		auto polygonSize = pFbxMesh->GetPolygonSize(polygonIndex);
 
 		for (int i = 1; i <= polygonSize - 2; i++)
 		{
 			if (texturedInfo.textured)
 			{
-				texturedInfo.uvIndex = pMesh->GetElementMaterial()->GetIndexArray().GetAt(polygonIndex) + baseUvIndex;
+				texturedInfo.uvIndex = pFbxMesh->GetElementMaterial()->GetIndexArray().GetAt(polygonIndex) + baseUvIndex;
 			}
 
 			if (texturedInfo.uvIndex >= nextBaseUvIndex)
@@ -187,11 +190,13 @@ void DDMML::FbxLoader::ConvertMesh(FbxMesh* pMesh, const std::string& path, Mesh
 				nextBaseUvIndex = texturedInfo.uvIndex + 1;
 			}
 
-			HandleFbxVertex(pMesh, controlPoints, polygonIndex, 0, uniqueVertices, texturedInfo, skinnedInfo, mesh.GetVertices(), mesh.GetIndices());
-			HandleFbxVertex(pMesh, controlPoints, polygonIndex, i, uniqueVertices, texturedInfo, skinnedInfo, mesh.GetVertices(), mesh.GetIndices());
-			HandleFbxVertex(pMesh, controlPoints, polygonIndex, i + 1, uniqueVertices, texturedInfo, skinnedInfo, mesh.GetVertices(), mesh.GetIndices());
+			HandleFbxVertex(pFbxMesh, controlPoints, polygonIndex, 0, uniqueVertices, texturedInfo, skinnedInfo, mesh.GetVertices(), mesh.GetIndices());
+			HandleFbxVertex(pFbxMesh, controlPoints, polygonIndex, i, uniqueVertices, texturedInfo, skinnedInfo, mesh.GetVertices(), mesh.GetIndices());
+			HandleFbxVertex(pFbxMesh, controlPoints, polygonIndex, i + 1, uniqueVertices, texturedInfo, skinnedInfo, mesh.GetVertices(), mesh.GetIndices());
 		}
 	}
+
+	mesh.GetDiffuseTextureNames().push_back(ExtractDiffuseTexture(pFbxMesh));
 }
 
 void DDMML::FbxLoader::HandleFbxVertex(FbxMesh* pMesh, FbxVector4* controlPoints, int polygonIndex, int inPolygonPosition,
@@ -305,5 +310,32 @@ void DDMML::FbxLoader::HandleChild(FbxNode* child, const std::string& path, std:
 
 		meshes.emplace_back(std::move(currentMesh));
 	}
+}
+
+std::string DDMML::FbxLoader::ExtractDiffuseTexture(FbxMesh* pFbxMesh)
+{
+	int materialIndex = pFbxMesh->GetElementMaterial()->GetIndexArray().GetAt(0); // or polygonIndex
+	FbxNode* node = pFbxMesh->GetNode();
+
+	if (node && materialIndex < node->GetMaterialCount()) {
+		FbxSurfaceMaterial* material = node->GetMaterial(materialIndex);
+		if (material) {
+			FbxProperty diffuseProperty = material->FindProperty(FbxSurfaceMaterial::sDiffuse);
+			if (diffuseProperty.IsValid()) {
+				int textureCount = diffuseProperty.GetSrcObjectCount<FbxFileTexture>();
+				for (int i = 0; i < textureCount; ++i) {
+					FbxFileTexture* texture = diffuseProperty.GetSrcObject<FbxFileTexture>(i);
+					if (texture) {
+						const char* fileName = texture->GetFileName(); // Full path
+						const char* relativeName = texture->GetRelativeFileName(); // Relative path
+						std::cout << "Diffuse Texture File: " << fileName << std::endl;
+
+						return fileName;
+					}
+				}
+			}
+		}
+	}
+
 }
 
