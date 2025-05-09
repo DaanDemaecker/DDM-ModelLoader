@@ -328,14 +328,15 @@ std::string DDMML::FbxLoader::ExtractDiffuseTexture(FbxMesh* pFbxMesh)
 					if (texture) {
 						const char* fileName = texture->GetFileName(); // Full path
 						const char* relativeName = texture->GetRelativeFileName(); // Relative path
-						std::cout << "Diffuse Texture File: " << fileName << std::endl;
+						std::cout << "Diffuse Texture File: " << relativeName << std::endl;
 
-						return fileName;
+						return relativeName;
 					}
 				}
 			}
 		}
 	}
 
+	return "";
 }
 
