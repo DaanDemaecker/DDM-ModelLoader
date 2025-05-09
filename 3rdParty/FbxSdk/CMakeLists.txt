@@ -1,6 +1,8 @@
 
 target_link_libraries(${EXECUTABLE_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/debug/libfbxsdk.lib)
 
+target_compile_definitions(${EXECUTABLE_NAME} PRIVATE FBXSDK_SHARED)
+
 # Include FBX SDK headers
 target_include_directories(${EXECUTABLE_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
