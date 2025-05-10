@@ -6,7 +6,7 @@
 // File includes
 #include "ModelLoaders/ObjLoader.h"
 #include "ModelLoaders/GltfLoader.h"
-#include "FbxLoader.h"
+#include "ModelLoaders/FbxLoader.h"
 
 // Standard library includes
 #include <iostream>
@@ -20,7 +20,7 @@ DDMML::DDMModelLoader::DDMModelLoader()
 
 	m_ModelLoaders["gltf"] = std::make_unique<DDMML::GltfLoader>();
 
-	m_pFbxLoader = std::make_unique<FbxLoader>();
+	m_ModelLoaders["fbx"] = std::make_unique<DDMML::FbxLoader>();
 }
 
 
@@ -78,102 +78,12 @@ void DDMML::DDMModelLoader::LoadScene(const std::string& fileName, std::vector<s
 	}
 }
 
-
-
-
-
-
-void DDMML::DDMModelLoader::LoadModel(const std::string& path, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices)
-{
-	auto extension = GetExtension(path);
-
-	std::transform(extension.begin(), extension.end(), extension.begin(),
-		[](unsigned char c) { return std::tolower(c); });
-
-	try
-	{
-		if (extension == "fbx")
-		{
-			m_pFbxLoader->LoadModel(path, vertices, indices);
-		}
-		else
-		{
-			throw std::runtime_error(extension + " is not a supported model format");
-		}
-
-		SetupTangents(vertices, indices);
-	}
-	catch(const std::exception & e)
-	{
-		std::cout << e.what() << std::endl;
-	}
-}
-
-void DDMML::DDMModelLoader::LoadScene(const std::string& path, std::vector<std::vector<Vertex>>& verticesLists, std::vector<std::vector<uint32_t>>& indicesLists)
-{
-	auto extension = GetExtension(path);
-
-	std::transform(extension.begin(), extension.end(), extension.begin(),
-		[](unsigned char c) { return std::tolower(c); });
-
-	try
-	{
-		throw std::runtime_error(extension + " is not a supported scene format");
-
-		for (int i{}; i < verticesLists.size(); ++i)
-		{
-			SetupTangents(verticesLists[i], indicesLists[i]);
-		}
-	}
-	catch (const std::exception& e)
-	{
-		std::cout << e.what() << std::endl;
-	}
-}
-
-void DDMML::DDMModelLoader::LoadScene(const std::string& fileName, std::vector<Mesh>& meshes)
-{
-
-	auto extension = GetExtension(fileName);
-	std::transform(extension.begin(), extension.end(), extension.begin(),
-		[](unsigned char c) { return std::tolower(c); });
-
-	auto path = GetPath(fileName);
-
-	try
-	{
-		if (extension == "fbx")
-		{
-			m_pFbxLoader->LoadScene(fileName, path, meshes);
-		}
-		else
-		{
-			throw std::runtime_error(extension + " is not a supported scene format");
-		}
-		for (int i{}; i < meshes.size(); ++i)
-		{
-			SetupTangents(meshes[i].GetVertices(), meshes[i].GetIndices());
-		}
-	}
-	catch (const std::exception& e)
-	{
-		std::cout << e.what() << std::endl;
-	}
-}
-
 std::string DDMML::DDMModelLoader::GetExtension(const std::string& filename)
 {
 	// Get the index of the final period in the name, all characters after it indicate the extension
 	auto index = filename.find_last_of(".");
 
 	return  filename.substr(index + 1, filename.size());
-}
-
-std::string DDMML::DDMModelLoader::GetPath(const std::string& filename)
-{
-	auto index = filename.find_last_of("/");
-
-	return filename.substr(0, index + 1);
 }
 
 void DDMML::DDMModelLoader::SetupTangents(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices)

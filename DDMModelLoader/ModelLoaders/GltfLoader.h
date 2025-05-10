@@ -56,7 +56,7 @@ namespace DDMML
 		///	- filename: The name of the scene file
 		/// - meshes: A vector of meshes, each mesh will be filled with the vertices and indices for a single model
 		/// </summary>
-		virtual void LoadScene(const std::string& fileName, std::vector<std::unique_ptr<Mesh>>& meshes);
+		virtual void LoadScene(const std::string& fileName, std::vector<std::unique_ptr<Mesh>>& meshes) override;
 	public:
 		/// <summary>
 		/// Load a single GLTF model into a DDMML Mesh

@@ -2,12 +2,15 @@
 
 // File includes
 #include "FbxLoader.h"
-#include "Mesh.h"
+#include "../Mesh.h"
+#include "../Vertex.h"
 
 // Standard library includes
 #include <iostream>
+#include <stdexcept>
 
 DDMML::FbxLoader::FbxLoader()
+	:ModelLoader("fbx")
 {
 	// Initialize the FBX SDK
 	m_pFbxManager = FbxManager::Create();
@@ -20,17 +23,20 @@ DDMML::FbxLoader::~FbxLoader()
 	m_pFbxManager->Destroy();
 }
 
-void DDMML::FbxLoader::LoadModel(const std::string& path, std::vector<DDMML::Vertex>& vertices, std::vector<uint32_t>& indices)
+void DDMML::FbxLoader::LoadModel(const std::string& fileName, Mesh* mesh)
 {
-	FbxScene* scene = LoadScene(path);
+	FbxScene* scene = LoadScene(fileName);
 
 	if (!scene)
 	{
-		throw std::runtime_error(path + " is not a valid file path");
+		throw std::runtime_error(fileName + " is not a valid file path");
 	}
 
 
 	int baseUvIndex{};
+
+	auto& vertices{ mesh->GetVertices() };
+	auto& indices{ mesh->GetIndices() };
 
 
 	// Create map to store vertices
@@ -58,14 +64,14 @@ void DDMML::FbxLoader::LoadModel(const std::string& path, std::vector<DDMML::Ver
 	scene->Destroy();
 }
 
-void DDMML::FbxLoader::LoadScene(const std::string& fileName, const std::string& path, std::vector<DDMML::Mesh>& meshes)
+void DDMML::FbxLoader::LoadScene(const std::string& fileName, std::vector<std::unique_ptr<Mesh>>& meshes)
 {
 	FbxScene* scene = LoadScene(fileName);
 
 	if (!scene)
 	{
 		throw std::runtime_error(fileName + " is not a valid file path");
-	}	
+	}
 
 
 	int baseUvIndex{};
@@ -79,8 +85,8 @@ void DDMML::FbxLoader::LoadScene(const std::string& fileName, const std::string&
 		for (int i = 0; i < root->GetChildCount(); i++)
 		{
 			FbxNode* child = root->GetChild(i);
-			
-			HandleChild(child, path, meshes);
+
+			HandleChild(child, fileName, meshes);
 		}
 	}
 
@@ -99,15 +105,6 @@ void DDMML::FbxLoader::ConvertMesh(FbxMesh* pMesh,
 	FbxVector4* controlPoints = pMesh->GetControlPoints();
 	pMesh->GenerateNormals();
 	pMesh->GenerateTangentsData();
-
-	fbxSkinnedInfo skinnedInfo{};
-	skinnedInfo.isSkinned = static_cast<bool>(pMesh->GetDeformerCount());
-
-	if (skinnedInfo.isSkinned)
-	{
-		skinnedInfo.pSkin = static_cast<FbxSkin*>(pMesh->GetDeformer(0, FbxDeformer::eSkin));
-		SetupSkin(skinnedInfo, pMesh->GetControlPointsCount());
-	}
 
 	int nextBaseUvIndex{ baseUvIndex };
 
@@ -132,16 +129,16 @@ void DDMML::FbxLoader::ConvertMesh(FbxMesh* pMesh,
 				nextBaseUvIndex = texturedInfo.uvIndex + 1;
 			}
 
-			HandleFbxVertex(pMesh, controlPoints, polygonIndex, 0, uniqueVertices, texturedInfo, skinnedInfo, vertices, indices);
-			HandleFbxVertex(pMesh, controlPoints, polygonIndex, i, uniqueVertices, texturedInfo, skinnedInfo, vertices, indices);
-			HandleFbxVertex(pMesh, controlPoints, polygonIndex, i + 1, uniqueVertices, texturedInfo, skinnedInfo, vertices, indices);
+			HandleFbxVertex(pMesh, controlPoints, polygonIndex, 0, uniqueVertices, texturedInfo, vertices, indices);
+			HandleFbxVertex(pMesh, controlPoints, polygonIndex, i, uniqueVertices, texturedInfo, vertices, indices);
+			HandleFbxVertex(pMesh, controlPoints, polygonIndex, i + 1, uniqueVertices, texturedInfo, vertices, indices);
 		}
 	}
 
 	baseUvIndex = nextBaseUvIndex;
 }
 
-void DDMML::FbxLoader::ConvertMesh(FbxMesh* pFbxMesh, const std::string& path, Mesh& mesh, int& baseUvIndex)
+void DDMML::FbxLoader::ConvertMesh(FbxMesh* pFbxMesh, const std::string& path, Mesh* mesh, int& baseUvIndex)
 {
 	int numPolygons = pFbxMesh->GetPolygonCount();
 
@@ -150,16 +147,6 @@ void DDMML::FbxLoader::ConvertMesh(FbxMesh* pFbxMesh, const std::string& path, M
 	FbxVector4* controlPoints = pFbxMesh->GetControlPoints();
 	pFbxMesh->GenerateNormals();
 	pFbxMesh->GenerateTangentsData();
-
-	fbxSkinnedInfo skinnedInfo{};
-	skinnedInfo.isSkinned = static_cast<bool>(pFbxMesh->GetDeformerCount());
-
-	if (skinnedInfo.isSkinned)
-	{
-		skinnedInfo.pSkin = static_cast<FbxSkin*>(pFbxMesh->GetDeformer(0, FbxDeformer::eSkin));
-		SetupSkin(skinnedInfo, pFbxMesh->GetControlPointsCount());
-	}
-
 
 	int nextBaseUvIndex{ baseUvIndex };
 
@@ -190,18 +177,18 @@ void DDMML::FbxLoader::ConvertMesh(FbxMesh* pFbxMesh, const std::string& path, M
 				nextBaseUvIndex = texturedInfo.uvIndex + 1;
 			}
 
-			HandleFbxVertex(pFbxMesh, controlPoints, polygonIndex, 0, uniqueVertices, texturedInfo, skinnedInfo, mesh.GetVertices(), mesh.GetIndices());
-			HandleFbxVertex(pFbxMesh, controlPoints, polygonIndex, i, uniqueVertices, texturedInfo, skinnedInfo, mesh.GetVertices(), mesh.GetIndices());
-			HandleFbxVertex(pFbxMesh, controlPoints, polygonIndex, i + 1, uniqueVertices, texturedInfo, skinnedInfo, mesh.GetVertices(), mesh.GetIndices());
+			HandleFbxVertex(pFbxMesh, controlPoints, polygonIndex, 0, uniqueVertices, texturedInfo, mesh->GetVertices(), mesh->GetIndices());
+			HandleFbxVertex(pFbxMesh, controlPoints, polygonIndex, i, uniqueVertices, texturedInfo, mesh->GetVertices(), mesh->GetIndices());
+			HandleFbxVertex(pFbxMesh, controlPoints, polygonIndex, i + 1, uniqueVertices, texturedInfo, mesh->GetVertices(), mesh->GetIndices());
 		}
 	}
 
-	mesh.GetDiffuseTextureNames().push_back(ExtractDiffuseTexture(pFbxMesh));
+	mesh->GetDiffuseTextureNames().push_back(ExtractDiffuseTexture(pFbxMesh));
 }
 
 void DDMML::FbxLoader::HandleFbxVertex(FbxMesh* pMesh, FbxVector4* controlPoints, int polygonIndex, int inPolygonPosition,
 	std::unordered_map<DDMML::Vertex, uint32_t>& uniqueVertices,
-	fbxTexturedInfo& textureInfo, fbxSkinnedInfo& skinnedInfo,
+	fbxTexturedInfo& textureInfo,
 	std::vector<DDMML::Vertex>& vertices, std::vector<uint32_t>& indices)
 {
 	int vertexIndex = pMesh->GetPolygonVertex(polygonIndex, inPolygonPosition);
@@ -251,26 +238,6 @@ void DDMML::FbxLoader::HandleFbxVertex(FbxMesh* pMesh, FbxVector4* controlPoints
 	indices.push_back(uniqueVertices[vertex]);
 }
 
-
-void DDMML::FbxLoader::SetupSkin(fbxSkinnedInfo& skinnedInfo, int controlPointAmount)
-{
-	skinnedInfo.boneInfos.resize(controlPointAmount);
-
-
-	for (int boneIndex{}; boneIndex < skinnedInfo.pSkin->GetClusterCount(); boneIndex++)
-	{
-		auto cluster = skinnedInfo.pSkin->GetCluster(boneIndex);
-
-		for (int j{}; j < cluster->GetControlPointIndicesCount(); j++)
-		{
-			int controlPointIndex = cluster->GetControlPointIndices()[j];
-			float boneWeight = static_cast<float>(cluster->GetControlPointWeights()[j]);
-
-			skinnedInfo.boneInfos[controlPointIndex].AddBone(static_cast<float>(boneIndex), boneWeight);
-		}
-	}
-}
-
 FbxScene* DDMML::FbxLoader::LoadScene(const std::string& path)
 {
 	auto pFbxImporter = FbxImporter::Create(m_pFbxManager, "importer");
@@ -289,7 +256,7 @@ FbxScene* DDMML::FbxLoader::LoadScene(const std::string& path)
 	return scene;
 }
 
-void DDMML::FbxLoader::HandleChild(FbxNode* child, const std::string& path, std::vector<DDMML::Mesh>& meshes)
+void DDMML::FbxLoader::HandleChild(FbxNode* child, const std::string& path, std::vector<std::unique_ptr<DDMML::Mesh>>& meshes)
 {
 	for (int i{}; i < child->GetChildCount(); ++i)
 	{
@@ -304,9 +271,9 @@ void DDMML::FbxLoader::HandleChild(FbxNode* child, const std::string& path, std:
 		// Extract mesh data
 		FbxMesh* mesh = child->GetMesh();
 
-		DDMML::Mesh currentMesh{};
+		auto currentMesh{std::make_unique<DDMML::Mesh>()};
 
-		ConvertMesh(mesh, path, currentMesh, baseUvIndex);
+		ConvertMesh(mesh, path, currentMesh.get(), baseUvIndex);
 
 		meshes.emplace_back(std::move(currentMesh));
 	}

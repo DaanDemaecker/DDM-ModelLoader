@@ -11,19 +11,20 @@ set(INC_FILES
 	"DDMModelLoader/ModelLoaders/ModelLoader.h"
 	"DDMModelLoader/ModelLoaders/ObjLoader.h"
 	"DDMModelLoader/ModelLoaders/GltfLoader.h" 
+	"DDMModelLoader/ModelLoaders/FbxLoader.h"
 
+	"DDMModelLoader/DDMModelLoader.h"
 	"DDMModelLoader/Mesh"
 	"DDMModelLoader/Vertex.h"
-	"DDMModelLoader/FbxLoader.h"
 ) 
 
 set(SOURCE_FILES 
 	"DDMModelLoader/ModelLoaders/ModelLoader.cpp"
 	"DDMModelLoader/ModelLoaders/ObjLoader.cpp"
 	"DDMModelLoader/ModelLoaders/GltfLoader.cpp"
+	"DDMModelLoader/ModelLoaders/FbxLoader.cpp" 
 
 	"DDMModelLoader/DDMModelLoader.cpp"
-	"DDMModelLoader/FbxLoader.cpp" 
  )
 
 add_library(${EXECUTABLE_NAME} STATIC ${SOURCE_FILES} ${INC_FILES})
