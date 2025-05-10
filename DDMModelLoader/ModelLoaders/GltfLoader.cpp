@@ -250,7 +250,7 @@ std::string DDMML::GltfLoader::GetPath(const std::string& filename)
 {
     auto index = filename.find_last_of("/");
 
-    if (index <= filename.length() - 1)
+    if (index >= filename.length() - 1)
         return "";
 
     return filename.substr(0, index + 1);
