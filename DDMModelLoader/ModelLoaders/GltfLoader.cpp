@@ -11,6 +11,7 @@
 
 // Standard library includes
 #include <iostream>
+#include <memory>
 
 DDMML::GltfLoader::GltfLoader()
     :ModelLoader("gltf")
@@ -23,136 +24,118 @@ DDMML::GltfLoader::~GltfLoader()
 
 void DDMML::GltfLoader::LoadModel(const std::string& fileName, Mesh* mesh)
 {
-    tinygltf::TinyGLTF loader;
-    std::string error;
-    std::string warn;
-    tinygltf::Model model;
+    // Initialize necessary variables
+    tinygltf::TinyGLTF loader{};
+    tinygltf::Model gltfModel{};
+    std::string error{};
+    std::string warn{};
 
-    bool result = loader.LoadASCIIFromFile(&model, &error, &warn, fileName);
+    // Load the model from the file
+    bool result = loader.LoadASCIIFromFile(&gltfModel, &error, &warn, fileName);
 
+    // If warning, throw
     if (!warn.empty())
     {
-        std::cout << "Warning: " << warn << std::endl;
+        throw std::runtime_error("Warning: " + warn);
     }
 
+    // If error, throw
     if (!error.empty())
     {
-        std::cout << "Error: " << error << std::endl;
+        throw std::runtime_error("Error: " + error);
     }
 
+    // If no result, throw
     if (!result)
     {
-        throw("Unable to load model");
+        throw std::runtime_error("Unable to load model");
     }
 
+    // Get vertex and index list from mesh
     auto& vertices = mesh->GetVertices();
     auto& indices = mesh->GetIndices();
 
-
-    for (auto& mesh : model.meshes)
+    // Loop trough gltfmodel meshes
+    for (auto& currentMesh : gltfModel.meshes)
     {
-        for (auto& primitive : mesh.primitives)
+        // Loop trough primitives in mesh
+        for (auto& primitive : currentMesh.primitives)
         {
-            ExtractVertices(model, primitive, vertices);
-            ExtractIndices(model, primitive, indices);
+            // Extract vertices, indices and texture names
+            ExtractVertices(gltfModel, primitive, vertices);
+            ExtractIndices(gltfModel, primitive, indices);
+            ExtractDiffuseTextures(gltfModel, primitive, GetPath(fileName), mesh);
         }
     }
 }
 
-void DDMML::GltfLoader::LoadScene(const std::string& path, std::vector<std::vector<Vertex>>& verticesLists, std::vector<std::vector<uint32_t>>& indicesLists)
+void DDMML::GltfLoader::LoadScene(const std::string& fileName, std::vector<std::unique_ptr<Mesh>>& meshes)
 {
-    tinygltf::TinyGLTF loader;
-    std::string error;
-    std::string warn;
-    tinygltf::Model model;
+    // Initialize necessary variables
+    tinygltf::TinyGLTF loader{};
+    tinygltf::Model gltfModel{};
+    std::string error{};
+    std::string warn{};
 
-    bool result = loader.LoadASCIIFromFile(&model, &error, &warn, path);
+    // Load the model from the file
+    bool result = loader.LoadASCIIFromFile(&gltfModel, &error, &warn, fileName);
 
+    // If warning, throw
     if (!warn.empty())
     {
-        std::cout << "Warning: " << warn << std::endl;
+        throw std::runtime_error("Warning: " + warn);
     }
 
+    // If error, throw
     if (!error.empty())
     {
-        std::cout << "Error: " << error << std::endl;
+        throw std::runtime_error("Error: " + error);
     }
 
+    // If no result, throw
     if (!result)
     {
-        throw("Unable to load model");
+        throw std::runtime_error("Unable to load model");
     }
 
-    int modelAmount{};
 
-    for (auto& mesh : model.meshes)
+    // Calculate total amount of models to load and reserve in vector
+    int modelAmount{};
+    for (auto& mesh : gltfModel.meshes)
     {
         modelAmount += static_cast<int>(mesh.primitives.size());
     }
+    meshes.reserve(modelAmount);
 
-    verticesLists.resize(modelAmount);
-    indicesLists.resize(modelAmount);
-
-    int currentModel{};
-
-    for (auto& mesh : model.meshes)
+    // Loop trough all meshes in GLTF model
+    for (auto& mesh : gltfModel.meshes)
     {
+        // Loop trough primitives in mesh
         for (auto& primitive : mesh.primitives)
         {
-            ExtractVertices(model, primitive, verticesLists[currentModel]);
-            ExtractIndices(model, primitive, indicesLists[currentModel]);
-            ++currentModel;
+            // Load single Primitive into DDMML Mesh
+            std::unique_ptr<DDMML::Mesh> currentModel{ std::make_unique<DDMML::Mesh>() };
+            LoadModel(gltfModel, primitive, fileName, currentModel.get());
         }
     }
 }
 
-void DDMML::GltfLoader::LoadScene(const std::string& filename, const std::string& path, std::vector<Mesh>& meshes)
+void DDMML::GltfLoader::LoadModel(const tinygltf::Model& gltfModel, const tinygltf::Primitive& ptimitive, const std::string& fileName, DDMML::Mesh* mesh)
 {
-    tinygltf::TinyGLTF loader;
-    std::string error;
-    std::string warn;
-    tinygltf::Model model;
+    // Get the vertices and indices attributes and extract them from the gltf model
+    auto& vertices = mesh->GetVertices();
+    auto& indices = mesh->GetIndices();
 
-    bool result = loader.LoadASCIIFromFile(&model, &error, &warn, filename);
+    ExtractVertices(gltfModel, ptimitive, vertices);
+    ExtractIndices(gltfModel, ptimitive, indices);
 
-    if (!warn.empty())
-    {
-        std::cout << "Warning: " << warn << std::endl;
-    }
+    // Extract diffuse textures
+    ExtractDiffuseTextures(gltfModel, ptimitive, GetPath(fileName), mesh);
 
-    if (!error.empty())
-    {
-        std::cout << "Error: " << error << std::endl;
-    }
 
-    if (!result)
-    {
-        throw("Unable to load model");
-    }
-
-    int modelAmount{};
-
-    for (auto& mesh : model.meshes)
-    {
-        modelAmount += static_cast<int>(mesh.primitives.size());
-    }
-
-    
-    meshes.resize(modelAmount);
-
-    int currentModel{};
-
-    for (auto& mesh : model.meshes)
-    {
-        for (auto& primitive : mesh.primitives)
-        {
-            LoadModel(model, primitive, path, meshes[currentModel]);
-            ++currentModel;
-        }
-    }
 }
 
-void DDMML::GltfLoader::ExtractVertices(const tinygltf::Model& model, const tinygltf::Primitive& primitive, std::vector<Vertex>& vertices)
+void DDMML::GltfLoader::ExtractVertices(const tinygltf::Model& gltfModel, const tinygltf::Primitive& primitive, std::vector<Vertex>& vertices)
 {
     // Find attributes in the primitive
     auto posIt = primitive.attributes.find("POSITION");
@@ -165,9 +148,9 @@ void DDMML::GltfLoader::ExtractVertices(const tinygltf::Model& model, const tiny
 
     // Extract POSITION data
     if (posIt != primitive.attributes.end()) {
-        const tinygltf::Accessor& accessor = model.accessors[posIt->second];
-        const tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];
-        const tinygltf::Buffer& buffer = model.buffers[bufferView.buffer];
+        const tinygltf::Accessor& accessor = gltfModel.accessors[posIt->second];
+        const tinygltf::BufferView& bufferView = gltfModel.bufferViews[accessor.bufferView];
+        const tinygltf::Buffer& buffer = gltfModel.buffers[bufferView.buffer];
 
         posData = reinterpret_cast<const float*>(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);
         vertexCount = accessor.count;  // Vertex count
@@ -175,27 +158,27 @@ void DDMML::GltfLoader::ExtractVertices(const tinygltf::Model& model, const tiny
 
     // Extract NORMAL data
     if (normIt != primitive.attributes.end()) {
-        const tinygltf::Accessor& accessor = model.accessors[normIt->second];
-        const tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];
-        const tinygltf::Buffer& buffer = model.buffers[bufferView.buffer];
+        const tinygltf::Accessor& accessor = gltfModel.accessors[normIt->second];
+        const tinygltf::BufferView& bufferView = gltfModel.bufferViews[accessor.bufferView];
+        const tinygltf::Buffer& buffer = gltfModel.buffers[bufferView.buffer];
 
         normData = reinterpret_cast<const float*>(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);
     }
 
     // Extract COLOR data
     if (colIt != primitive.attributes.end()) {
-        const tinygltf::Accessor& accessor = model.accessors[colIt->second];
-        const tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];
-        const tinygltf::Buffer& buffer = model.buffers[bufferView.buffer];
+        const tinygltf::Accessor& accessor = gltfModel.accessors[colIt->second];
+        const tinygltf::BufferView& bufferView = gltfModel.bufferViews[accessor.bufferView];
+        const tinygltf::Buffer& buffer = gltfModel.buffers[bufferView.buffer];
 
         colData = reinterpret_cast<const float*>(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);
     }
 
     // Extract TEXCOORD_0 data
     if (texIt != primitive.attributes.end()) {
-        const tinygltf::Accessor& accessor = model.accessors[texIt->second];
-        const tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];
-        const tinygltf::Buffer& buffer = model.buffers[bufferView.buffer];
+        const tinygltf::Accessor& accessor = gltfModel.accessors[texIt->second];
+        const tinygltf::BufferView& bufferView = gltfModel.bufferViews[accessor.bufferView];
+        const tinygltf::Buffer& buffer = gltfModel.buffers[bufferView.buffer];
 
         texData = reinterpret_cast<const float*>(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);
     }
@@ -213,13 +196,13 @@ void DDMML::GltfLoader::ExtractVertices(const tinygltf::Model& model, const tiny
     }
 }
 
-void DDMML::GltfLoader::ExtractIndices(const tinygltf::Model& model, const tinygltf::Primitive& primitive, std::vector<uint32_t>& indices)
+void DDMML::GltfLoader::ExtractIndices(const tinygltf::Model& gltfModel, const tinygltf::Primitive& primitive, std::vector<uint32_t>& indices)
 {
     if (primitive.indices < 0) return; // No indices
 
-    const tinygltf::Accessor& accessor = model.accessors[primitive.indices];
-    const tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];
-    const tinygltf::Buffer& buffer = model.buffers[bufferView.buffer];
+    const tinygltf::Accessor& accessor = gltfModel.accessors[primitive.indices];
+    const tinygltf::BufferView& bufferView = gltfModel.bufferViews[accessor.bufferView];
+    const tinygltf::Buffer& buffer = gltfModel.buffers[bufferView.buffer];
 
     const void* dataPtr = &buffer.data[bufferView.byteOffset + accessor.byteOffset];
     size_t count = accessor.count;
@@ -244,22 +227,7 @@ void DDMML::GltfLoader::ExtractIndices(const tinygltf::Model& model, const tinyg
     }
 }
 
-void DDMML::GltfLoader::LoadModel(const tinygltf::Model& model, const tinygltf::Primitive& ptimitive, const std::string& path, DDMML::Mesh& mesh)
-{
-    // Get the vertices and indices attributes and extract them from the gltf model
-	auto& vertices = mesh.GetVertices();
-	auto& indices = mesh.GetIndices();
-
-	ExtractVertices(model, ptimitive, vertices);
-	ExtractIndices(model, ptimitive, indices);
-
-	// Extract diffuse textures
-	ExtractDiffuseTextures(model, ptimitive, path, mesh);
-
-
-}
-
-void DDMML::GltfLoader::ExtractDiffuseTextures(const tinygltf::Model& model, const tinygltf::Primitive& primitive, const std::string& path, Mesh& mesh)
+void DDMML::GltfLoader::ExtractDiffuseTextures(const tinygltf::Model& model, const tinygltf::Primitive& primitive, const std::string&& path, Mesh* mesh)
 {
 	auto& materialIndex = primitive.material;
 
@@ -274,5 +242,15 @@ void DDMML::GltfLoader::ExtractDiffuseTextures(const tinygltf::Model& model, con
 	const tinygltf::Texture& text = model.textures[texIdx];
 	const tinygltf::Image& img = model.images[text.source];	
 
-	mesh.GetDiffuseTextureNames().push_back(path + img.uri);
+	mesh->GetDiffuseTextureNames().push_back(path + img.uri);
+}
+
+std::string DDMML::GltfLoader::GetPath(const std::string& filename)
+{
+    auto index = filename.find_last_of("/");
+
+    if (index <= filename.length() - 1)
+        return "";
+
+    return filename.substr(0, index + 1);
 }

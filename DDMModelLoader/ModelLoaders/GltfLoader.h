@@ -28,9 +28,13 @@ namespace DDMML
 	class GltfLoader final : public ModelLoader
 	{
 	public:
+		// Default constructor
 		GltfLoader();
+
+		// Destructor
 		~GltfLoader();
 
+		// Delete copy and move operations
 		GltfLoader(GltfLoader& other) = delete;
 		GltfLoader(GltfLoader&& other) = delete;
 
@@ -45,31 +49,55 @@ namespace DDMML
 		/// </summary>
 		virtual void LoadModel(const std::string& fileName, Mesh* mesh) override;
 
-		// Load in a .gltf scene given a file path
-		// Parameters:
-		//		- path: The path to the scene file
-		//		- verticesLists: A list of vectors of vertices, each vector will be filled with the vertices for a single model
-		//		- indicesLists: A list of vectors of indicees, each vector will be filled with the indices for a single model
-		void LoadScene(const std::string& path, std::vector<std::vector<Vertex>>& verticesLists, std::vector<std::vector<uint32_t>>& indicesLists);
 
 		/// <summary>
 		/// Loads in a scene given a file path
 		/// <params>
 		///	- filename: The name of the scene file
-		/// -path: The path to the folder holding the scene file
 		/// - meshes: A vector of meshes, each mesh will be filled with the vertices and indices for a single model
 		/// </summary>
-		void LoadScene(const std::string& fileName, const std::string& path, std::vector<Mesh>& meshes);
-
+		virtual void LoadScene(const std::string& fileName, std::vector<std::unique_ptr<Mesh>>& meshes);
 	public:
+		/// <summary>
+		/// Load a single GLTF model into a DDMML Mesh
+		/// </summary>
+		/// <param name="model: ">The GLTF model to extract from</param>
+		/// <param name="primitive: ">The primitive within the GLTF model to extract from</param>
+		/// <param name="fileName: ">The filepath to the main scene/model</param>
+		/// <param name="mesh: ">The DDMML mesh to load the model into</param>
+		void LoadModel(const tinygltf::Model& model, const tinygltf::Primitive& ptimitive, const std::string& fileName, Mesh* mesh);
+
+		/// <summary>
+		/// Extract the vertices from the GLTF model
+		/// </summary>
+		/// <param name="model: ">The GLTF model to extract from</param>
+		/// <param name="primitive: ">The primitive within the GLTF model to extract from</param>
+		/// <param name="mesh: ">The DDMML mesh to load the model into</param>
 		void ExtractVertices(const tinygltf::Model& model, const tinygltf::Primitive& primitive, std::vector<Vertex>& vertices);
 
-
+		/// <summary>
+		/// Extract the indices from the GLTF model
+		/// </summary>
+		/// <param name="model: ">The GLTF model to extract from</param>
+		/// <param name="primitive: ">The primitive within the GLTF model to extract from</param>
+		/// <param name="mesh: ">The DDMML mesh to load the model into</param>
 		void ExtractIndices(const tinygltf::Model& model, const tinygltf::Primitive& primitive, std::vector<uint32_t>& indices);
 	
-		void LoadModel(const tinygltf::Model& model, const tinygltf::Primitive& ptimitive, const std::string& path, Mesh& mesh);
+		/// <summary>
+		/// Extract the diffuse texture names from the GLTF model
+		/// </summary>
+		/// <param name="model: ">The GLTF model to extract from</param>
+		/// <param name="primitive: ">The primitive within the GLTF model to extract from</param>
+		/// <param name="fileName: ">The filepath to the main scene/model</param>
+		/// <param name="mesh: ">The DDMML mesh to load the model into</param>
+		void ExtractDiffuseTextures(const tinygltf::Model& model, const tinygltf::Primitive& primitive, const std::string&& path, Mesh* mesh);
 
-		void ExtractDiffuseTextures(const tinygltf::Model& model, const tinygltf::Primitive& primitive, const std::string& path, Mesh& mesh);
+		/// <summary>
+		/// Get the relative path to the folder holding the scene/model
+		/// </summary>
+		/// <param name="filename: ">full path to the scene/model</param>
+		/// <returns></returns>
+		std::string GetPath(const std::string& filename);
 	};
 }
 
