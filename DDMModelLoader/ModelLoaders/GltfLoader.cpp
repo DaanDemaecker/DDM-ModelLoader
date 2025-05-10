@@ -116,6 +116,7 @@ void DDMML::GltfLoader::LoadScene(const std::string& fileName, std::vector<std::
             // Load single Primitive into DDMML Mesh
             std::unique_ptr<DDMML::Mesh> currentModel{ std::make_unique<DDMML::Mesh>() };
             LoadModel(gltfModel, primitive, fileName, currentModel.get());
+            meshes.emplace_back(std::move(currentModel));
         }
     }
 }

@@ -58,6 +58,11 @@ namespace DDMML
 	private:
 		std::map<std::string, std::unique_ptr<ModelLoader>> m_ModelLoaders{};
 
+		/// <summary>
+		/// Gets the extension from a given filepath
+		/// </summary>
+		/// <param name="filename"></param>
+		/// <returns></returns>
 		std::string GetExtension(const std::string& filename);
 
 		void SetupTangents(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices);
