@@ -53,6 +53,36 @@ void DDMML::DDMModelLoader::LoadModel(const std::string& fileName, Mesh* mesh)
 	}
 }
 
+
+void DDMML::DDMModelLoader::LoadScene(const std::string& fileName, std::vector<std::unique_ptr<Mesh>>& meshes)
+{
+	auto extension = GetExtension(fileName);
+
+	std::transform(extension.begin(), extension.end(), extension.begin(),
+		[](unsigned char c) { return std::tolower(c); });
+
+	try
+	{
+		if (m_ModelLoaders.find(extension) != m_ModelLoaders.end())
+		{
+			m_ModelLoaders[extension]->LoadScene(fileName, meshes);
+		}
+		else
+		{
+			throw std::runtime_error(extension + " is not supported by DDMModelLoader ");
+		}
+	}
+	catch (const std::exception& e)
+	{
+		std::cout << e.what() << std::endl;
+	}
+}
+
+
+
+
+
+
 void DDMML::DDMModelLoader::LoadModel(const std::string& path, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices)
 {
 	auto extension = GetExtension(path);

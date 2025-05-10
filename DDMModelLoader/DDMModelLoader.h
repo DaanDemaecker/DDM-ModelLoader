@@ -47,6 +47,16 @@ namespace DDMML
 		/// </summary>
 		virtual void LoadModel(const std::string& fileName, Mesh* mesh);
 
+		/// <summary>
+		/// Loads in a scene given a file path
+		/// <params>
+		///	- filename: The name of the scene file
+		/// - meshes: A vector of meshes, each mesh will be filled with the vertices and indices for a single model
+		/// </summary>
+		virtual void LoadScene(const std::string& fileName, std::vector<std::unique_ptr<Mesh>>& meshes);
+
+
+
 		// Load in a 3D model given a file path
 		// Parameters:
 		//     - path: The path to the model file
