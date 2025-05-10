@@ -105,7 +105,7 @@ void DDMML::DDMModelLoader::LoadModel(const std::string& path, std::vector<Verte
 	}
 	catch(const std::exception & e)
 	{
-		std::cerr << "Exception caught: " << e.what() << std::endl;
+		std::cout << e.what() << std::endl;
 	}
 }
 
@@ -127,38 +127,38 @@ void DDMML::DDMModelLoader::LoadScene(const std::string& path, std::vector<std::
 	}
 	catch (const std::exception& e)
 	{
-		std::cerr << "Exception caught: " << e.what() << std::endl;
+		std::cout << e.what() << std::endl;
 	}
 }
 
 void DDMML::DDMModelLoader::LoadScene(const std::string& fileName, std::vector<Mesh>& meshes)
 {
 
-auto extension = GetExtension(fileName);
-std::transform(extension.begin(), extension.end(), extension.begin(),
-	[](unsigned char c) { return std::tolower(c); });
+	auto extension = GetExtension(fileName);
+	std::transform(extension.begin(), extension.end(), extension.begin(),
+		[](unsigned char c) { return std::tolower(c); });
 
-auto path = GetPath(fileName);
+	auto path = GetPath(fileName);
 
-try
-{
-	if (extension == "fbx")
+	try
 	{
-		m_pFbxLoader->LoadScene(fileName, path, meshes);
+		if (extension == "fbx")
+		{
+			m_pFbxLoader->LoadScene(fileName, path, meshes);
+		}
+		else
+		{
+			throw std::runtime_error(extension + " is not a supported scene format");
+		}
+		for (int i{}; i < meshes.size(); ++i)
+		{
+			SetupTangents(meshes[i].GetVertices(), meshes[i].GetIndices());
+		}
 	}
-	else
+	catch (const std::exception& e)
 	{
-		throw std::runtime_error(extension + " is not a supported scene format");
+		std::cout << e.what() << std::endl;
 	}
-	for (int i{}; i < meshes.size(); ++i)
-	{
-		SetupTangents(meshes[i].GetVertices(), meshes[i].GetIndices());
-	}
-}
-catch (const std::exception& e)
-{
-	std::cerr << "Exception caught: " << e.what() << std::endl;
-}
 }
 
 std::string DDMML::DDMModelLoader::GetExtension(const std::string& filename)

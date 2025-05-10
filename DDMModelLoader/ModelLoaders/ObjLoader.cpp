@@ -37,7 +37,7 @@ void DDMML::ObjLoader::LoadModel(const std::string& fileName, Mesh* mesh)
 	// Read file, returned false, throw error
 	if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &err, fileName.c_str()))
 	{
-		throw fileName + " is not a valid file path";
+		throw err;
 	}
 
 	// Create map to store vertices
