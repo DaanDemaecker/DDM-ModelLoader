@@ -10,20 +10,20 @@ set(EXECUTABLE_NAME DDMModelLoader)
 set(INC_FILES 
 	"DDMModelLoader/ModelLoaders/ModelLoader.h"
 	"DDMModelLoader/ModelLoaders/ObjLoader.h"
+	"DDMModelLoader/ModelLoaders/GltfLoader.h" 
 
 	"DDMModelLoader/Mesh"
 	"DDMModelLoader/Vertex.h"
 	"DDMModelLoader/FbxLoader.h"
-	"DDMModelLoader/GltfLoader.h" 
 ) 
 
 set(SOURCE_FILES 
 	"DDMModelLoader/ModelLoaders/ModelLoader.cpp"
 	"DDMModelLoader/ModelLoaders/ObjLoader.cpp"
+	"DDMModelLoader/ModelLoaders/GltfLoader.cpp"
 
 	"DDMModelLoader/DDMModelLoader.cpp"
 	"DDMModelLoader/FbxLoader.cpp" 
-	"DDMModelLoader/GltfLoader.cpp"
  )
 
 add_library(${EXECUTABLE_NAME} STATIC ${SOURCE_FILES} ${INC_FILES})

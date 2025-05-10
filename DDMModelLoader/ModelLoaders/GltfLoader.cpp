@@ -7,12 +7,13 @@
 //#define TINYGLTF_NO_STB_IMAGE
 //#define TINYGLTF_NO_STB_IMAGE_WRITE
 #include "tiny_gltf.h"
-#include "Mesh.h"
+#include "../Mesh.h"
 
 // Standard library includes
 #include <iostream>
 
 DDMML::GltfLoader::GltfLoader()
+    :ModelLoader("gltf")
 {
 }
 
@@ -20,40 +21,42 @@ DDMML::GltfLoader::~GltfLoader()
 {
 }
 
-void DDMML::GltfLoader::LoadModel(const std::string& path, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices)
+void DDMML::GltfLoader::LoadModel(const std::string& fileName, Mesh* mesh)
 {
-	tinygltf::TinyGLTF loader;
-	std::string error;
-	std::string warn;
-	tinygltf::Model model;
+    tinygltf::TinyGLTF loader;
+    std::string error;
+    std::string warn;
+    tinygltf::Model model;
 
-	bool result = loader.LoadASCIIFromFile(&model, &error, &warn, path);
+    bool result = loader.LoadASCIIFromFile(&model, &error, &warn, fileName);
 
-	if (!warn.empty())
-	{
+    if (!warn.empty())
+    {
         std::cout << "Warning: " << warn << std::endl;
-	}
+    }
 
-	if (!error.empty())
-	{
+    if (!error.empty())
+    {
         std::cout << "Error: " << error << std::endl;
-	}
+    }
 
-	if (!result)
-	{
-		throw("Unable to load model");
-	}
+    if (!result)
+    {
+        throw("Unable to load model");
+    }
+
+    auto& vertices = mesh->GetVertices();
+    auto& indices = mesh->GetIndices();
 
 
-	for (auto& mesh : model.meshes)
-	{
-		for (auto& primitive : mesh.primitives)
-		{
-			ExtractVertices(model, primitive, vertices);
-			ExtractIndices(model, primitive, indices);
-		}
-
-	}
+    for (auto& mesh : model.meshes)
+    {
+        for (auto& primitive : mesh.primitives)
+        {
+            ExtractVertices(model, primitive, vertices);
+            ExtractIndices(model, primitive, indices);
+        }
+    }
 }
 
 void DDMML::GltfLoader::LoadScene(const std::string& path, std::vector<std::vector<Vertex>>& verticesLists, std::vector<std::vector<uint32_t>>& indicesLists)

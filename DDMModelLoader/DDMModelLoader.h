@@ -81,7 +81,6 @@ namespace DDMML
 
 	private:
 		std::unique_ptr<FbxLoader> m_pFbxLoader{};
-		std::unique_ptr<GltfLoader> m_pGltfLoader{};
 		std::map<std::string, std::unique_ptr<ModelLoader>> m_ModelLoaders{};
 
 		std::string GetExtension(const std::string& filename);

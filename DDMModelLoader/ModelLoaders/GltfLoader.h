@@ -5,8 +5,11 @@
 #ifndef _GLTF_LOADER_
 #define _GLTF_LOADER_
 
+// Parent include
+#include "ModelLoader.h"
+
 // File includes
-#include "Vertex.h"
+#include "../Vertex.h"
 
 // Standard library includes
 #include <string>
@@ -22,7 +25,7 @@ namespace DDMML
 {
 	class Mesh;
 
-	class GltfLoader final
+	class GltfLoader final : public ModelLoader
 	{
 	public:
 		GltfLoader();
@@ -34,12 +37,13 @@ namespace DDMML
 		GltfLoader& operator=(GltfLoader& other) = delete;
 		GltfLoader& operator=(GltfLoader&& other) = delete;
 
-		// Load in a .gltf model given a file path
-		// Parameters:
-		//     - path: The path to the model file
-		//     - vertices: The vector that will be used to store the vertices
-		//     - indices: The vector that will be used to store the indices
-		void LoadModel(const std::string& path, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices);
+		/// <summary>
+		/// Loads in a model given a file path
+		/// <params>
+		///	- filename: The name of the scene file
+		/// - mesh: A pointer to a mesh struct, this mesh will be filled with the vertices and indices for a single model
+		/// </summary>
+		virtual void LoadModel(const std::string& fileName, Mesh* mesh) override;
 
 		// Load in a .gltf scene given a file path
 		// Parameters:

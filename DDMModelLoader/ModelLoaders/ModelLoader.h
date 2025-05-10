@@ -20,6 +20,13 @@ namespace DDMML
 		// Delete default constructor
 		ModelLoader() = delete;
 
+		// Delete copy and move operations
+		ModelLoader(ModelLoader&) = delete;
+		ModelLoader(ModelLoader&&) = delete;
+
+		ModelLoader& operator=(ModelLoader&) = delete;
+		ModelLoader& operator=(ModelLoader&&) = delete;
+
 		/// <summary>
 		/// Constructor
 		/// </summary>

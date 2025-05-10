@@ -5,8 +5,8 @@
 
 // File includes
 #include "ModelLoaders/ObjLoader.h"
+#include "ModelLoaders/GltfLoader.h"
 #include "FbxLoader.h"
-#include "GltfLoader.h"
 
 // Standard library includes
 #include <iostream>
@@ -18,9 +18,9 @@ DDMML::DDMModelLoader::DDMModelLoader()
 {
 	m_ModelLoaders["obj"] = std::make_unique<DDMML::ObjLoader>();
 
+	m_ModelLoaders["gltf"] = std::make_unique<DDMML::GltfLoader>();
+
 	m_pFbxLoader = std::make_unique<FbxLoader>();
-	
-	m_pGltfLoader = std::make_unique<GltfLoader>();
 }
 
 
@@ -96,10 +96,6 @@ void DDMML::DDMModelLoader::LoadModel(const std::string& path, std::vector<Verte
 		{
 			m_pFbxLoader->LoadModel(path, vertices, indices);
 		}
-		else if (extension == "gltf")
-		{
-			m_pGltfLoader->LoadModel(path, vertices, indices);
-		}
 		else
 		{
 			throw std::runtime_error(extension + " is not a supported model format");
@@ -122,14 +118,7 @@ void DDMML::DDMModelLoader::LoadScene(const std::string& path, std::vector<std::
 
 	try
 	{
-		if (extension == "gltf")
-		{
-			m_pGltfLoader->LoadScene(path, verticesLists, indicesLists);
-		}
-		else
-		{
-			throw std::runtime_error(extension + " is not a supported scene format");
-		}
+		throw std::runtime_error(extension + " is not a supported scene format");
 
 		for (int i{}; i < verticesLists.size(); ++i)
 		{
@@ -153,10 +142,6 @@ auto path = GetPath(fileName);
 
 try
 {
-	if (extension == "gltf")
-	{
-		m_pGltfLoader->LoadScene(fileName, path, meshes);
-	}
 	if (extension == "fbx")
 	{
 		m_pFbxLoader->LoadScene(fileName, path, meshes);
