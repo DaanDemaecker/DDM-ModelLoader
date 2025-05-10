@@ -5,8 +5,9 @@
 #ifndef _OBJ_LOADER_
 #define _OBJ_LOADER_
 
-// File includes
-#include "Vertex.h"
+// Parent include
+#include "ModelLoader.h"
+
 
 // Standard library includes
 #include <string>
@@ -14,7 +15,9 @@
 
 namespace DDMML
 {
-	class ObjLoader final
+	class Mesh;
+
+	class ObjLoader final : public ModelLoader
 	{
 	public:
 		ObjLoader();
@@ -26,12 +29,13 @@ namespace DDMML
 		ObjLoader& operator=(ObjLoader& other) = delete;
 		ObjLoader& operator=(ObjLoader&& other) = delete;
 
-		// Load in a .obj model given a file path
-		// Parameters:
-		//     - path: The path to the model file
-		//     - vertices: The vector that will be used to store the vertices
-		//     - indices: The vector that will be used to store the indices
-		void LoadModel(const std::string& path, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices);
+		/// <summary>
+		/// Loads in a model given a file path
+		/// <params>
+		///	- filename: The name of the scene file
+		/// - mesh: A pointer to a mesh struct, this mesh will be filled with the vertices and indices for a single model
+		/// </summary>
+		virtual void LoadModel(const std::string& fileName, Mesh* mesh) override;
 	};
 }
 

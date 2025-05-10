@@ -8,23 +8,26 @@ cmake_policy(SET CMP0079 NEW)
 set(EXECUTABLE_NAME DDMModelLoader)
 
 set(INC_FILES 
+	"DDMModelLoader/ModelLoaders/ModelLoader.h"
+	"DDMModelLoader/ModelLoaders/ObjLoader.h"
+
 	"DDMModelLoader/Mesh"
-	"DDMModelLoader/ObjLoader.h"
 	"DDMModelLoader/Vertex.h"
 	"DDMModelLoader/FbxLoader.h"
 	"DDMModelLoader/GltfLoader.h" 
-)
+) 
 
 set(SOURCE_FILES 
+	"DDMModelLoader/ModelLoaders/ModelLoader.cpp"
+	"DDMModelLoader/ModelLoaders/ObjLoader.cpp"
+
 	"DDMModelLoader/DDMModelLoader.cpp"
-	"DDMModelLoader/ObjLoader.cpp"
 	"DDMModelLoader/FbxLoader.cpp" 
 	"DDMModelLoader/GltfLoader.cpp"
  )
 
 add_library(${EXECUTABLE_NAME} STATIC ${SOURCE_FILES} ${INC_FILES})
 
-target_include_directories(DDMModelLoader PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+# target_include_directories(DDMModelLoader PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 add_subdirectory(3rdParty)
-

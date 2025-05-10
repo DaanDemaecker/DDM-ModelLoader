@@ -14,28 +14,38 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <map>
 
 namespace DDMML
 {
 	class ObjLoader;
 	class FbxLoader;
 	class GltfLoader;
+	class ModelLoader;
 
-	class ModelLoader final
+	class DDMModelLoader final
 	{
 	public:
 		// Default constructor
-		ModelLoader();
+		DDMModelLoader();
 		
 		// Destructor
-		~ModelLoader();
+		~DDMModelLoader();
 
 		// Delete copy- and move operations
-		ModelLoader(ModelLoader& other) = delete;
-		ModelLoader(ModelLoader&& other) = delete;
+		DDMModelLoader(DDMModelLoader& other) = delete;
+		DDMModelLoader(DDMModelLoader&& other) = delete;
 
-		ModelLoader& operator=(ModelLoader& other) = delete;
-		ModelLoader& operator=(ModelLoader&& other) = delete;
+		DDMModelLoader& operator=(DDMModelLoader& other) = delete;
+		DDMModelLoader& operator=(DDMModelLoader&& other) = delete;
+
+		/// <summary>
+		/// Loads in a model given a file path
+		/// <params>
+		///	- filename: The name of the scene file
+		/// - mesh: A pointer to a mesh struct, this mesh will be filled with the vertices and indices for a single model
+		/// </summary>
+		virtual void LoadModel(const std::string& fileName, Mesh* mesh);
 
 		// Load in a 3D model given a file path
 		// Parameters:
@@ -60,9 +70,9 @@ namespace DDMML
 		void LoadScene(const std::string& path, std::vector<Mesh>& meshes);
 
 	private:
-		std::unique_ptr<ObjLoader> m_pObjLoader{};
 		std::unique_ptr<FbxLoader> m_pFbxLoader{};
 		std::unique_ptr<GltfLoader> m_pGltfLoader{};
+		std::map<std::string, std::unique_ptr<ModelLoader>> m_ModelLoaders{};
 
 		std::string GetExtension(const std::string& filename);
 

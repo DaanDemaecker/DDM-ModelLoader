@@ -6,12 +6,14 @@
 // File includes
 #include "tiny_obj_loader.h"
 #include "glm/glm.hpp"
+#include "../Mesh.h"
 
 // Standard library includes
 #include <stdexcept>
 #include <unordered_map>
 
 DDMML::ObjLoader::ObjLoader()
+	:ModelLoader("obj")
 {
 }
 
@@ -19,20 +21,23 @@ DDMML::ObjLoader::~ObjLoader()
 {
 }
 
-void DDMML::ObjLoader::LoadModel(const std::string& path, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices)
+void DDMML::ObjLoader::LoadModel(const std::string& fileName, Mesh* mesh)
 {
 	// Create needed objects to read in .obj file
 	tinyobj::attrib_t attrib{};
 	std::vector<tinyobj::shape_t> shapes{};
 	std::vector<tinyobj::material_t> materials{};
 
+	auto& vertices = mesh->GetVertices();
+	auto& indices = mesh->GetIndices();
+
 	// Create objects for error throwing
 	std::string err;
 
 	// Read file, returned false, throw error
-	if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &err, path.c_str()))
+	if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &err, fileName.c_str()))
 	{
-		throw std::runtime_error(path + " is not a valid file path");
+		throw fileName + " is not a valid file path";
 	}
 
 	// Create map to store vertices
