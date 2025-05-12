@@ -1,7 +1,7 @@
 #ifndef _VERTEX_
 #define _VERTEX_
 
-#include "glm/glm.hpp"
+#include "Includes/GLMIncludes.h"
 
 #include <functional>
 #include <optional>
@@ -31,22 +31,6 @@ namespace DDMML
 
 namespace std
 {
-	template<> struct hash<glm::vec2>
-	{
-		size_t operator()(const glm::vec2& v) const
-		{
-			return hash<float>()(v.x) ^ (hash<float>()(v.y) << 1);
-		}
-	};
-
-	template<> struct hash<glm::vec3>
-	{
-		size_t operator()(const glm::vec3& v) const
-		{
-			return hash<float>()(v.x) ^ (hash<float>()(v.y) << 1) ^ (hash<float>()(v.z) << 2);
-		}
-	};
-
 	template<> struct hash<DDMML::Vertex>
 	{
 		size_t operator()(const DDMML::Vertex& vertex) const
