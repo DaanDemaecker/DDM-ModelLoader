@@ -77,7 +77,28 @@ namespace DDMML
 			return m_NormalTextureNames;
 		}
 
+		/// <summary>
+		/// Get the name of the mesh
+		/// </summary>
+		/// <returns>Name</returns>
+		const std::string& GetName() const { return m_Name; }
+
+		/// <summary>
+		/// Set the name of the mesh
+		/// </summary>
+		/// <param name="name: ">New name</param>
+		void SetName(const std::string& name) { m_Name = name; }
+
+		/// <summary>
+		/// Set the name of the mesh
+		/// </summary>
+		/// <param name="name: ">New name</param>
+		void SetName(const std::string&& name) { m_Name = name; }
+
 	private:
+		// The name of the mesh
+		std::string m_Name{"UnNamed"};
+
 		// The vertices and of the mesh
 		std::vector<Vertex> m_Vertices{};
 		std::vector<uint32_t> m_Indices{};

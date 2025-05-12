@@ -19,6 +19,7 @@ namespace tinygltf
 {
 	class Model;
 	struct Primitive;
+	struct Mesh;
 }
 
 namespace DDMML
@@ -65,7 +66,7 @@ namespace DDMML
 		/// <param name="primitive: ">The primitive within the GLTF model to extract from</param>
 		/// <param name="fileName: ">The filepath to the main scene/model</param>
 		/// <param name="mesh: ">The DDMML mesh to load the model into</param>
-		void LoadModel(const tinygltf::Model& model, const tinygltf::Primitive& ptimitive, const std::string& fileName, Mesh* mesh);
+		void LoadModel(const tinygltf::Model& model, const tinygltf::Mesh& tinyGltfMesh, const tinygltf::Primitive& ptimitive, const std::string& fileName, Mesh* mesh);
 
 		/// <summary>
 		/// Extract the vertices from the GLTF model
@@ -91,6 +92,14 @@ namespace DDMML
 		/// <param name="fileName: ">The filepath to the main scene/model</param>
 		/// <param name="mesh: ">The DDMML mesh to load the model into</param>
 		void ExtractDiffuseTextures(const tinygltf::Model& model, const tinygltf::Primitive& primitive, const std::string&& path, Mesh* mesh);
+
+		/// <summary>
+		/// Extract the name from the GLTF model
+		/// </summary>
+		/// <param name="model: ">The GLTF model to extract from</param>
+		/// <param name="primitive: ">The primitive within the GLTF model to extract from</param>
+		/// <param name="mesh: ">The DDMML mesh to load the model into</param>
+		void ExtractName(const tinygltf::Model& model, const tinygltf::Mesh& tinyGltfMesh, const tinygltf::Primitive& primitive,  Mesh* mesh);
 
 		/// <summary>
 		/// Get the relative path to the folder holding the scene/model

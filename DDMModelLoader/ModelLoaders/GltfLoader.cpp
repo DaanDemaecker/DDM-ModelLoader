@@ -22,7 +22,7 @@ DDMML::GltfLoader::~GltfLoader()
 {
 }
 
-void DDMML::GltfLoader::LoadModel(const std::string& fileName, Mesh* mesh)
+void DDMML::GltfLoader::LoadModel(const std::string& fileName, Mesh* pMesh)
 {
     // Initialize necessary variables
     tinygltf::TinyGLTF loader{};
@@ -51,9 +51,11 @@ void DDMML::GltfLoader::LoadModel(const std::string& fileName, Mesh* mesh)
         throw std::runtime_error("Unable to load model");
     }
 
+    pMesh->SetName(gltfModel.nodes[0].name);
+
     // Get vertex and index list from mesh
-    auto& vertices = mesh->GetVertices();
-    auto& indices = mesh->GetIndices();
+    auto& vertices = pMesh->GetVertices();
+    auto& indices = pMesh->GetIndices();
 
     // Loop trough gltfmodel meshes
     for (auto& currentMesh : gltfModel.meshes)
@@ -64,7 +66,7 @@ void DDMML::GltfLoader::LoadModel(const std::string& fileName, Mesh* mesh)
             // Extract vertices, indices and texture names
             ExtractVertices(gltfModel, primitive, vertices);
             ExtractIndices(gltfModel, primitive, indices);
-            ExtractDiffuseTextures(gltfModel, primitive, GetPath(fileName), mesh);
+            ExtractDiffuseTextures(gltfModel, primitive, GetPath(fileName), pMesh);
         }
     }
 }
@@ -114,26 +116,27 @@ void DDMML::GltfLoader::LoadScene(const std::string& fileName, std::vector<std::
         for (auto& primitive : mesh.primitives)
         {
             // Load single Primitive into DDMML Mesh
-            std::unique_ptr<DDMML::Mesh> currentModel{ std::make_unique<DDMML::Mesh>() };
-            LoadModel(gltfModel, primitive, fileName, currentModel.get());
-            meshes.emplace_back(std::move(currentModel));
+            std::unique_ptr<DDMML::Mesh> currentMesh{ std::make_unique<DDMML::Mesh>() };
+            LoadModel(gltfModel, mesh, primitive, fileName, currentMesh.get());
+            meshes.emplace_back(std::move(currentMesh));
         }
     }
 }
 
-void DDMML::GltfLoader::LoadModel(const tinygltf::Model& gltfModel, const tinygltf::Primitive& ptimitive, const std::string& fileName, DDMML::Mesh* mesh)
+void DDMML::GltfLoader::LoadModel(const tinygltf::Model& gltfModel, const tinygltf::Mesh& tinyGltfMesh, const tinygltf::Primitive& primitive, const std::string& fileName, DDMML::Mesh* pMesh)
 {
-    // Get the vertices and indices attributes and extract them from the gltf model
-    auto& vertices = mesh->GetVertices();
-    auto& indices = mesh->GetIndices();
+    // Extract the name
+    ExtractName(gltfModel, tinyGltfMesh, primitive, pMesh);
 
-    ExtractVertices(gltfModel, ptimitive, vertices);
-    ExtractIndices(gltfModel, ptimitive, indices);
+    // Get the vertices and indices attributes and extract them from the gltf model
+    auto& vertices = pMesh->GetVertices();
+    auto& indices = pMesh->GetIndices();
+
+    ExtractVertices(gltfModel, primitive, vertices);
+    ExtractIndices(gltfModel, primitive, indices);
 
     // Extract diffuse textures
-    ExtractDiffuseTextures(gltfModel, ptimitive, GetPath(fileName), mesh);
-
-
+    ExtractDiffuseTextures(gltfModel, primitive, GetPath(fileName), pMesh);
 }
 
 void DDMML::GltfLoader::ExtractVertices(const tinygltf::Model& gltfModel, const tinygltf::Primitive& primitive, std::vector<Vertex>& vertices)
@@ -244,6 +247,14 @@ void DDMML::GltfLoader::ExtractDiffuseTextures(const tinygltf::Model& model, con
 	const tinygltf::Image& img = model.images[text.source];	
 
 	mesh->GetDiffuseTextureNames().push_back(path + img.uri);
+}
+
+
+
+
+void DDMML::GltfLoader::ExtractName(const tinygltf::Model& model, const tinygltf::Mesh& tinyGltfMesh, const tinygltf::Primitive& primitive, Mesh* mesh)
+{
+    mesh->SetName(tinyGltfMesh.name);
 }
 
 std::string DDMML::GltfLoader::GetPath(const std::string& filename)
