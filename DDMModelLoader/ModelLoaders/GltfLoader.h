@@ -94,6 +94,15 @@ namespace DDMML
 		void ExtractDiffuseTextures(const tinygltf::Model& model, const tinygltf::Primitive& primitive, const std::string&& path, Mesh* mesh);
 
 		/// <summary>
+		/// Extract the normal texture names from the GLTF model
+		/// </summary>
+		/// <param name="model: ">The GLTF model to extract from</param>
+		/// <param name="primitive: ">The primitive within the GLTF model to extract from</param>
+		/// <param name="fileName: ">The filepath to the main scene/model</param>
+		/// <param name="mesh: ">The DDMML mesh to load the model into</param>
+		void ExtractNormalTextures(const tinygltf::Model& model, const tinygltf::Primitive& primitive, const std::string&& path, Mesh* mesh);
+
+		/// <summary>
 		/// Extract the name from the GLTF model
 		/// </summary>
 		/// <param name="model: ">The GLTF model to extract from</param>

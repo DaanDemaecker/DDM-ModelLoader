@@ -252,6 +252,24 @@ void DDMML::GltfLoader::ExtractDiffuseTextures(const tinygltf::Model& model, con
 
 
 
+void DDMML::GltfLoader::ExtractNormalTextures(const tinygltf::Model& model, const tinygltf::Primitive& primitive, const std::string&& path, Mesh* mesh)
+{
+    auto& materialIndex = primitive.material;
+
+    if (materialIndex < 0) return; // No material
+
+    auto& mat = model.materials[materialIndex];
+
+    int texIdx = mat.normalTexture.index;
+
+    if (texIdx < 0) return; // No texture
+
+    const tinygltf::Texture& text = model.textures[texIdx];
+    const tinygltf::Image& img = model.images[text.source];
+
+    mesh->GetDiffuseTextureNames().push_back(path + img.uri);
+}
+
 void DDMML::GltfLoader::ExtractName(const tinygltf::Model& model, const tinygltf::Mesh& tinyGltfMesh, const tinygltf::Primitive& primitive, Mesh* mesh)
 {
     mesh->SetName(tinyGltfMesh.name);
