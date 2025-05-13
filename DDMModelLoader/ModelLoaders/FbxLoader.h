@@ -18,7 +18,7 @@
 namespace DDMML
 {
 	class Mesh;
-	class Vertex;
+	struct Vertex;
 
 	class FbxLoader final : public ModelLoader
 	{

@@ -41,6 +41,7 @@ void DDMML::DDMModelLoader::LoadModel(const std::string& fileName, Mesh* mesh)
 		if (m_ModelLoaders.find(extension) != m_ModelLoaders.end())
 		{
 			m_ModelLoaders[extension]->LoadModel(fileName, mesh);
+			SetupTangents(mesh->GetVertices(), mesh->GetIndices());
 		}
 		else
 		{
