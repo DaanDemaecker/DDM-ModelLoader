@@ -36,6 +36,13 @@ namespace DDMML
 		/// - mesh: A pointer to a mesh struct, this mesh will be filled with the vertices and indices for a single model
 		/// </summary>
 		virtual void LoadModel(const std::string& fileName, Mesh* mesh) override;
+
+		/// <summary>
+		/// Gets the name of the file, without the path leading up to it and extension
+		/// </summary>
+		/// <param name="fileName: ">Full path to file</param>
+		/// <returns>Name of the file</returns>
+		std::string GetName(const std::string& fileName);
 	};
 }
 

@@ -184,6 +184,7 @@ void DDMML::FbxLoader::ConvertMesh(FbxMesh* pFbxMesh, const std::string& path, M
 	}
 
 	mesh->GetDiffuseTextureNames().push_back(ExtractDiffuseTexture(pFbxMesh));
+	mesh->SetName(ExtractName(pFbxMesh));
 }
 
 void DDMML::FbxLoader::HandleFbxVertex(FbxMesh* pMesh, FbxVector4* controlPoints, int polygonIndex, int inPolygonPosition,
@@ -305,5 +306,10 @@ std::string DDMML::FbxLoader::ExtractDiffuseTexture(FbxMesh* pFbxMesh)
 	}
 
 	return "";
+}
+
+std::string DDMML::FbxLoader::ExtractName(FbxMesh* fbxMesh)
+{
+	return fbxMesh->GetName();
 }
 

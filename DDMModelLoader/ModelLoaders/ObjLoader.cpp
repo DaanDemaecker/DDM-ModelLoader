@@ -30,6 +30,7 @@ void DDMML::ObjLoader::LoadModel(const std::string& fileName, Mesh* mesh)
 
 	auto& vertices = mesh->GetVertices();
 	auto& indices = mesh->GetIndices();
+	mesh->SetName(GetName(fileName));
 
 	// Create objects for error throwing
 	std::string err;
@@ -97,4 +98,18 @@ void DDMML::ObjLoader::LoadModel(const std::string& fileName, Mesh* mesh)
 			indices.push_back(uniqueVertices[vertex]);
 		}
 	}
+}
+
+std::string DDMML::ObjLoader::GetName(const std::string& fileName)
+{
+	auto beginIndex = fileName.find_last_of("/");
+
+	// Get the index of the final period in the name, all characters after it indicate the extension
+	auto endIndex = fileName.find_last_of(".");
+
+	if (beginIndex >= endIndex)
+		beginIndex = 0;
+
+
+	return fileName.substr(beginIndex, endIndex);
 }

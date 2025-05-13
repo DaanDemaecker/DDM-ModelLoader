@@ -70,6 +70,8 @@ namespace DDMML
 		void HandleChild(FbxNode* child, const std::string& path, std::vector<std::unique_ptr<DDMML::Mesh>>& meshes);
 
 		std::string ExtractDiffuseTexture(FbxMesh* fbxMesh);
+
+		std::string ExtractName(FbxMesh* fbxMesh);
 	};
 }
 
