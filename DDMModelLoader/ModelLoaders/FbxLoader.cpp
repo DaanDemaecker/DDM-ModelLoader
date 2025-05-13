@@ -35,6 +35,7 @@ void DDMML::FbxLoader::LoadModel(const std::string& fileName, Mesh* mesh)
 
 	int baseUvIndex{};
 
+	mesh->SetName(scene->GetName());
 	auto& vertices{ mesh->GetVertices() };
 	auto& indices{ mesh->GetIndices() };
 
