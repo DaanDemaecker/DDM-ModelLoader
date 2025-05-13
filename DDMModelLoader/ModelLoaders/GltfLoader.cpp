@@ -137,6 +137,9 @@ void DDMML::GltfLoader::LoadModel(const tinygltf::Model& gltfModel, const tinygl
 
     // Extract diffuse textures
     ExtractDiffuseTextures(gltfModel, primitive, GetPath(fileName), pMesh);
+
+    // Extract normal textures
+    ExtractNormalTextures(gltfModel, primitive, GetPath(fileName), pMesh);
 }
 
 void DDMML::GltfLoader::ExtractVertices(const tinygltf::Model& gltfModel, const tinygltf::Primitive& primitive, std::vector<Vertex>& vertices)
