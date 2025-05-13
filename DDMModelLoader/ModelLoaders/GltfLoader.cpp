@@ -270,7 +270,7 @@ void DDMML::GltfLoader::ExtractNormalTextures(const tinygltf::Model& model, cons
     const tinygltf::Texture& text = model.textures[texIdx];
     const tinygltf::Image& img = model.images[text.source];
 
-    mesh->GetDiffuseTextureNames().push_back(path + img.uri);
+    mesh->GetNormalTextureNames().push_back(path + img.uri);
 }
 
 void DDMML::GltfLoader::ExtractName(const tinygltf::Model& model, const tinygltf::Mesh& tinyGltfMesh, const tinygltf::Primitive& primitive, Mesh* mesh)
