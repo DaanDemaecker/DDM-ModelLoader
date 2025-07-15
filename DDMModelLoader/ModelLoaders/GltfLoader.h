@@ -111,11 +111,20 @@ namespace DDMML
 		void ExtractName(const tinygltf::Model& model, const tinygltf::Mesh& tinyGltfMesh, const tinygltf::Primitive& primitive,  Mesh* mesh);
 
 		/// <summary>
+		/// Extract if model uses transparancy
+		/// </summary>
+		/// <param name="model: ">The GLTF model to extract from</param>
+		/// <param name="primitive: ">The primitive within the GLTF model to extract from</param>
+		/// <param name="mesh: ">The DDMML mesh to load the model into</param>
+		void ExtractTransparancy(const tinygltf::Model& model, const tinygltf::Primitive& primitive, Mesh* pMesh);
+
+		/// <summary>
 		/// Get the relative path to the folder holding the scene/model
 		/// </summary>
 		/// <param name="filename: ">full path to the scene/model</param>
 		/// <returns></returns>
 		std::string GetPath(const std::string& filename);
+
 	};
 }
 

@@ -95,6 +95,18 @@ namespace DDMML
 		/// <param name="name: ">New name</param>
 		void SetName(const std::string&& name) { m_Name = name; }
 
+		/// <summary>
+		/// Specify if textures use transparancy
+		/// </summary>
+		/// <param name="isTransparant: ">Is the material transparant</param>
+		void SetIsTransparant(bool isTransparant) { m_IsTransparant = isTransparant; }
+
+		/// <summary>
+		/// Query wether the material uses transparancy
+		/// </summary>
+		/// <returns>Does model use transparancy</returns>
+		bool GetIsTransparant() const { return m_IsTransparant; }
+
 	private:
 		// The name of the mesh
 		std::string m_Name{"UnNamed"};
@@ -108,6 +120,7 @@ namespace DDMML
 		std::vector<std::string> m_PBRTextureNames{};
 		std::vector<std::string> m_NormalTextureNames{};
 
+		bool m_IsTransparant{ false };
 	};
 }
 

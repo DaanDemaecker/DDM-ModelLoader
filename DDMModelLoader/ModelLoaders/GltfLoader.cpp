@@ -140,6 +140,8 @@ void DDMML::GltfLoader::LoadModel(const tinygltf::Model& gltfModel, const tinygl
 
     // Extract normal textures
     ExtractNormalTextures(gltfModel, primitive, GetPath(fileName), pMesh);
+
+    ExtractTransparancy(gltfModel, primitive, pMesh);
 }
 
 void DDMML::GltfLoader::ExtractVertices(const tinygltf::Model& gltfModel, const tinygltf::Primitive& primitive, std::vector<Vertex>& vertices)
@@ -276,6 +278,14 @@ void DDMML::GltfLoader::ExtractNormalTextures(const tinygltf::Model& model, cons
 void DDMML::GltfLoader::ExtractName(const tinygltf::Model& model, const tinygltf::Mesh& tinyGltfMesh, const tinygltf::Primitive& primitive, Mesh* mesh)
 {
     mesh->SetName(tinyGltfMesh.name);
+}
+
+void DDMML::GltfLoader::ExtractTransparancy(const tinygltf::Model& model, const tinygltf::Primitive& primitive, Mesh* mesh)
+{
+    const int& materialIndex = primitive.material;
+    auto& mat = model.materials[materialIndex];
+
+    mesh->SetIsTransparant(mat.alphaMode == "MASK");
 }
 
 std::string DDMML::GltfLoader::GetPath(const std::string& filename)
