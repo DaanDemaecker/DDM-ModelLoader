@@ -16,7 +16,7 @@ set(INC_FILES
 	"DDMModelLoader/DDMModelLoader.h"
 	"DDMModelLoader/Mesh"
 	"DDMModelLoader/Vertex.h"
- "DDMModelLoader/Includes/GLMIncludes.h") 
+	"DDMModelLoader/Includes/GLMIncludes.h") 
 
 set(SOURCE_FILES 
 	"DDMModelLoader/ModelLoaders/ModelLoader.cpp"
