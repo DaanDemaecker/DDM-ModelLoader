@@ -13,4 +13,4 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(tinygltf)
 
 # Link libraries
-target_link_libraries(${EXECUTABLE_NAME} PUBLIC tinygltf)
+target_link_libraries(${LIBRARY_NAME} PUBLIC tinygltf)

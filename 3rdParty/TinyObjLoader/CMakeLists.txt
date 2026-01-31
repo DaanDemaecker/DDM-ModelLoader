@@ -13,4 +13,4 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(tinyOBJLoader)
 
 # Link libraries
-target_link_libraries(${EXECUTABLE_NAME} PUBLIC tinyobjloader)
+target_link_libraries(${LIBRARY_NAME} PUBLIC tinyobjloader)

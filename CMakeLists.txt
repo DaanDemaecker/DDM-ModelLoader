@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 cmake_policy(SET CMP0079 NEW)
 
-set(EXECUTABLE_NAME DDMModelLoader)
+set(LIBRARY_NAME DDMModelLoader)
 
 set(INC_FILES 
 	"DDMModelLoader/ModelLoaders/ModelLoader.h"
@@ -27,8 +27,11 @@ set(SOURCE_FILES
 	"DDMModelLoader/DDMModelLoader.cpp"
  )
 
-add_library(${EXECUTABLE_NAME} STATIC ${SOURCE_FILES} ${INC_FILES})
+add_library(${LIBRARY_NAME} STATIC ${SOURCE_FILES} ${INC_FILES})
 
-# target_include_directories(DDMModelLoader PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(DDMModelLoader
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+)
 
 add_subdirectory(3rdParty)
