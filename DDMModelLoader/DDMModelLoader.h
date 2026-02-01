@@ -9,6 +9,7 @@
 #include "glm/glm.hpp"
 #include "Vertex.h"
 #include "Mesh.h"
+#include "Export.h"
 
 // Standard library includes
 #include <string>
@@ -23,7 +24,7 @@ namespace DDMML
 	class GltfLoader;
 	class ModelLoader;
 
-	class DDMModelLoader final
+	class DDMML_API DDMModelLoader final
 	{
 	public:
 		// Default constructor

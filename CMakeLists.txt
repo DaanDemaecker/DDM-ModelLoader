@@ -18,7 +18,7 @@ set(INC_FILES
 	"DDMModelLoader/DDMModelLoader.h"
 	"DDMModelLoader/Mesh"
 	"DDMModelLoader/Vertex.h"
-	"DDMModelLoader/Includes/GLMIncludes.h") 
+	"DDMModelLoader/Includes/GLMIncludes.h" "DDMModelLoader/Export.h") 
 
 set(SOURCE_FILES 
 	"DDMModelLoader/ModelLoaders/ModelLoader.cpp"
@@ -36,6 +36,9 @@ target_include_directories(DDMModelLoader
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
 )
 
+target_compile_definitions(DDMModelLoader
+    PRIVATE DDMMODELLOADER_BUILD
+)
 
 add_subdirectory(3rdparty)
 
