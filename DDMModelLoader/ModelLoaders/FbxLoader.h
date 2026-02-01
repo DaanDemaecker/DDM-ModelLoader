@@ -8,6 +8,7 @@
 #include "ModelLoader.h"
 
 // File includes
+#define FBXSDK_SHARED
 #include "fbxsdk.h"
 
 // Standard library includes
