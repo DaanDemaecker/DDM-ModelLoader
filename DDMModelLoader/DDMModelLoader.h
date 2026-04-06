@@ -57,7 +57,7 @@ namespace DDMML
 		virtual void LoadScene(const std::string& fileName, std::vector<std::unique_ptr<Mesh>>& meshes);
 
 	private:
-		std::map<std::string, std::unique_ptr<ModelLoader>> m_ModelLoaders{};
+		std::map<std::string, std::shared_ptr<ModelLoader>> m_ModelLoaders{};
 
 		/// <summary>
 		/// Gets the extension from a given filepath

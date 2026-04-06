@@ -16,11 +16,11 @@
 
 DDMML::DDMModelLoader::DDMModelLoader()
 {
-	m_ModelLoaders["obj"] = std::make_unique<DDMML::ObjLoader>();
+	//m_ModelLoaders["obj"] = std::make_unique<DDMML::ObjLoader>();
 
-	m_ModelLoaders["gltf"] = std::make_unique<DDMML::GltfLoader>();
+	//m_ModelLoaders["gltf"] = std::make_unique<DDMML::GltfLoader>();
 
-	m_ModelLoaders["fbx"] = std::make_unique<DDMML::FbxLoader>();
+	m_ModelLoaders["fbx"] = std::make_shared<DDMML::FbxLoader>();
 }
 
 
