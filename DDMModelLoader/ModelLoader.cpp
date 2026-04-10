@@ -52,7 +52,7 @@ void DDMML::ModelLoader::ProcessNode(std::vector<std::unique_ptr<Mesh>>& meshes,
     {
         aiNode* newNode = pNode->mChildren[i];
 
-        ProcessNode(meshes, pNode, pScene, fileName);
+        ProcessNode(meshes, newNode, pScene, fileName);
     }
 }
 
