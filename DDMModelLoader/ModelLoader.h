@@ -38,6 +38,14 @@ namespace DDMML
 		~ModelLoader();
 
 		/// <summary>
+		/// Load in an entire 3D file into one mesh
+		/// </summary>
+		/// <param name="fileName: ">path to the file of the 3D model</param>
+		/// <param name="name: ">name to give to the object</param>
+		/// <returns>Unique pointer to the created mesh</returns>
+		std::unique_ptr<Mesh> LoadModel(const std::string& fileName, const std::string& name);
+
+		/// <summary>
 		/// Loads in a scene given a file path
 		/// </summary>
 		/// <param name="fileName: ">path to the file</param>
@@ -76,6 +84,14 @@ namespace DDMML
 		/// <param name="indices: ">list of indices to append to</param>
 		/// <param name="mesh: ">mesh to extract from</param>
 		void ExtractIndices(std::vector<uint32_t>& indices, aiMesh* mesh);
+		
+		/// <summary>
+		/// Convert a list of meshes into a single mesh
+		/// </summary>
+		/// <param name="sceneMeshes: ">list of meshes to convert</param>
+		/// <param name="name: ">name to give to the object</param>
+		/// <returns>Combined mesh</returns>
+		std::unique_ptr<Mesh> ConvertSceneToMesh(std::vector<std::unique_ptr<Mesh>>& sceneMeshes, const std::string& name);
 	};
 
 

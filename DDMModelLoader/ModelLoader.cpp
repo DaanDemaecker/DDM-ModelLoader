@@ -6,6 +6,7 @@
 
 // Standard library includes
 #include <stdexcept>
+#include <algorithm>
 
 DDMML::ModelLoader::ModelLoader()
 {
@@ -14,6 +15,15 @@ DDMML::ModelLoader::ModelLoader()
 
 DDMML::ModelLoader::~ModelLoader()
 {
+}
+
+std::unique_ptr<DDMML::Mesh> DDMML::ModelLoader::LoadModel(const std::string& fileName, const std::string& name)
+{
+    std::vector<std::unique_ptr<DDMML::Mesh>> meshes{};
+
+    LoadScene(fileName, meshes);
+
+    return ConvertSceneToMesh(meshes, name);
 }
 
 void DDMML::ModelLoader::LoadScene(const std::string& fileName, std::vector<std::unique_ptr<Mesh>>& meshes)
@@ -149,6 +159,40 @@ void DDMML::ModelLoader::ExtractIndices(std::vector<uint32_t>& indices, aiMesh* 
             indices.push_back(face.mIndices[j]);
         }
     }
+}
+
+std::unique_ptr<DDMML::Mesh> DDMML::ModelLoader::ConvertSceneToMesh(std::vector<std::unique_ptr<Mesh>>& sceneMeshes, const std::string& name)
+{
+    std::unique_ptr<Mesh> newMesh = std::make_unique<Mesh>(name);
+
+    auto vertices = newMesh->GetVertices();
+    auto indices = newMesh->GetIndices();
+
+    for (auto& currentMesh : sceneMeshes)
+    {
+        uint32_t vertexAmount = vertices.size();
+        uint32_t indexAmount = indices.size();
+
+        auto newVertices = currentMesh->GetVertices();
+        auto newIndices = currentMesh->GetIndices();
+
+        vertices.resize(newVertices.size() + vertexAmount);
+        indices.resize(newIndices.size() + indexAmount);
+        
+        std::copy(newVertices.begin(), newVertices.end(), vertices.begin() + vertexAmount);
+
+        std::transform(newIndices.begin(), newIndices.end(), newIndices.end(),
+            [vertexAmount](uint32_t index)
+            {
+                return index + vertexAmount;
+            });
+
+
+        std::copy(newIndices.begin(), newIndices.end(), indices.begin() + indexAmount);
+    }
+
+
+    return newMesh;
 }
 
 
