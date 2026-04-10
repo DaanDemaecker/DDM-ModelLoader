@@ -170,7 +170,7 @@ std::unique_ptr<DDMML::Mesh> DDMML::ModelLoader::ConvertSceneToMesh(std::vector<
         
         std::copy(newVertices.begin(), newVertices.end(), vertices.begin() + vertexAmount);
 
-        std::transform(newIndices.begin(), newIndices.end(), newIndices.end(),
+        std::transform(newIndices.begin(), newIndices.end(), newIndices.begin(),
             [vertexAmount](uint32_t index)
             {
                 return index + vertexAmount;
