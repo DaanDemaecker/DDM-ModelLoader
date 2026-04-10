@@ -4,9 +4,7 @@
 #include "DDMModelLoader.h"
 
 // File includes
-#include "ModelLoaders/ObjLoader.h"
-#include "ModelLoaders/GltfLoader.h"
-#include "ModelLoaders/FbxLoader.h"
+#include "ModelLoader.h"
 
 // Standard library includes
 #include <iostream>
@@ -16,11 +14,7 @@
 
 DDMML::DDMModelLoader::DDMModelLoader()
 {
-	//m_ModelLoaders["obj"] = std::make_unique<DDMML::ObjLoader>();
-
-	//m_ModelLoaders["gltf"] = std::make_unique<DDMML::GltfLoader>();
-
-	m_ModelLoaders["fbx"] = std::make_shared<DDMML::FbxLoader>();
+	m_pModelLoader = std::make_unique<ModelLoader>();
 }
 
 
@@ -29,62 +23,14 @@ DDMML::DDMModelLoader::~DDMModelLoader()
 
 }
 
-void DDMML::DDMModelLoader::LoadModel(const std::string& fileName, Mesh* mesh)
-{
-	auto extension = GetExtension(fileName);
-
-	std::transform(extension.begin(), extension.end(), extension.begin(),
-		[](unsigned char c) { return std::tolower(c); });
-
-	try
-	{
-		if (m_ModelLoaders.find(extension) != m_ModelLoaders.end())
-		{
-			m_ModelLoaders[extension]->LoadModel(fileName, mesh);
-			SetupTangents(mesh->GetVertices(), mesh->GetIndices());
-		}
-		else
-		{
-			throw std::runtime_error(extension + " is not supported by DDMModelLoader ");
-		}
-	}
-	catch (const std::exception& e)
-	{
-		std::cout << e.what() << std::endl;
-	}
-}
-
-
 void DDMML::DDMModelLoader::LoadScene(const std::string& fileName, std::vector<std::unique_ptr<Mesh>>& meshes)
 {
-	auto extension = GetExtension(fileName);
+	m_pModelLoader->LoadScene(fileName, meshes);
 
-	std::transform(extension.begin(), extension.end(), extension.begin(),
-		[](unsigned char c) { return std::tolower(c); });
-
-	try
+	for (auto& mesh : meshes)
 	{
-		if (m_ModelLoaders.find(extension) != m_ModelLoaders.end())
-		{
-			m_ModelLoaders[extension]->LoadScene(fileName, meshes);
-		}
-		else
-		{
-			throw std::runtime_error(extension + " is not supported by DDMModelLoader ");
-		}
+		SetupTangents(mesh->GetVertices(), mesh->GetIndices());
 	}
-	catch (const std::exception& e)
-	{
-		std::cout << e.what() << std::endl;
-	}
-}
-
-std::string DDMML::DDMModelLoader::GetExtension(const std::string& filename)
-{
-	// Get the index of the final period in the name, all characters after it indicate the extension
-	auto index = filename.find_last_of(".");
-
-	return  filename.substr(index + 1, filename.size());
 }
 
 void DDMML::DDMModelLoader::SetupTangents(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices)

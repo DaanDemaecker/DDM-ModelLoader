@@ -7,27 +7,24 @@ cmake_policy(SET CMP0079 NEW)
 
 set(LIBRARY_NAME DDMModelLoader)
 
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDebugDLL")
+#set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDebug")
 
 set(INC_FILES 
-	"DDMModelLoader/ModelLoaders/ModelLoader.h"
-	"DDMModelLoader/ModelLoaders/ObjLoader.h"
-	"DDMModelLoader/ModelLoaders/GltfLoader.h" 
-	"DDMModelLoader/ModelLoaders/FbxLoader.h"
-
+	"DDMModelLoader/ModelLoader.h"
 	"DDMModelLoader/DDMModelLoader.h"
+
 	"DDMModelLoader/Mesh.h"
 	"DDMModelLoader/Vertex.h"
-	"DDMModelLoader/Includes/GLMIncludes.h" "DDMModelLoader/Export.h") 
+	
+	"DDMModelLoader/Includes/GLMIncludes.h"
+	
+	"DDMModelLoader/Export.h"
+	) 
 
 set(SOURCE_FILES 
-	"DDMModelLoader/ModelLoaders/ModelLoader.cpp"
-	"DDMModelLoader/ModelLoaders/ObjLoader.cpp"
-	"DDMModelLoader/ModelLoaders/GltfLoader.cpp"
-	"DDMModelLoader/ModelLoaders/FbxLoader.cpp" 
+	"DDMModelLoader/ModelLoader.cpp"
 
-	"DDMModelLoader/DDMModelLoader.cpp"
- )
+	"DDMModelLoader/DDMModelLoader.cpp")
 
 add_library(${LIBRARY_NAME} SHARED ${SOURCE_FILES} ${INC_FILES})
 
@@ -41,13 +38,3 @@ target_compile_definitions(DDMModelLoader
 )
 
 add_subdirectory(3rdparty)
-
-add_custom_command(
-    TARGET DDMModelLoader
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        $<TARGET_FILE:FBXSDK>
-        $<TARGET_FILE_DIR:${LIBRARY_NAME}>
-)
-
-target_link_libraries(${LIBRARY_NAME} PUBLIC FBXSDK)

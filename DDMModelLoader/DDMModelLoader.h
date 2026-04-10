@@ -19,9 +19,6 @@
 
 namespace DDMML
 {
-	class ObjLoader;
-	class FbxLoader;
-	class GltfLoader;
 	class ModelLoader;
 
 	class DDMML_API DDMModelLoader final
@@ -41,14 +38,6 @@ namespace DDMML
 		DDMModelLoader& operator=(DDMModelLoader&& other) = delete;
 
 		/// <summary>
-		/// Loads in a model given a file path
-		/// <params>
-		///	- filename: The name of the scene file
-		/// - mesh: A pointer to a mesh struct, this mesh will be filled with the vertices and indices for a single model
-		/// </summary>
-		virtual void LoadModel(const std::string& fileName, Mesh* mesh);
-
-		/// <summary>
 		/// Loads in a scene given a file path
 		/// <params>
 		///	- filename: The name of the scene file
@@ -57,14 +46,7 @@ namespace DDMML
 		virtual void LoadScene(const std::string& fileName, std::vector<std::unique_ptr<Mesh>>& meshes);
 
 	private:
-		std::map<std::string, std::shared_ptr<ModelLoader>> m_ModelLoaders{};
-
-		/// <summary>
-		/// Gets the extension from a given filepath
-		/// </summary>
-		/// <param name="filename"></param>
-		/// <returns></returns>
-		std::string GetExtension(const std::string& filename);
+		std::unique_ptr<ModelLoader> m_pModelLoader{};
 
 		void SetupTangents(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices);
 	};

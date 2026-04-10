@@ -12,11 +12,11 @@ namespace DDMML
 {
 	struct Vertex
 	{
+		glm::vec4 color{1, 1, 1, 1};
 		glm::vec3 pos;
-		glm::vec3 color{1, 1, 1};
-		glm::vec2 texCoord;
 		glm::vec3 normal;
 		glm::vec3 tangent;
+		glm::vec2 texCoord;
 
 		// Function for == operator
 			// Parameter:

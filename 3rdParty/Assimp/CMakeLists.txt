@@ -13,4 +13,4 @@ set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
 
 FetchContent_MakeAvailable(assimp)
 
-target_link_libraries(${LIBRARY_NAME} PUBLIC assimp)
+target_link_libraries(${PROJECT_NAME} PRIVATE assimp::assimp)

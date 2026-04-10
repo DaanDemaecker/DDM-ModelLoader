@@ -19,8 +19,16 @@ namespace DDMML
 	class Mesh
 	{
 	public:
-		// Default constructor and destructor
-		Mesh() = default;
+		// Delete default constructor
+		Mesh() = delete;
+
+
+		Mesh(const std::string& name)
+			:m_Name{name}
+		{
+
+		}
+
 		~Mesh() = default;
 
 		// Delete copy operations
@@ -84,22 +92,10 @@ namespace DDMML
 		const std::string& GetName() const { return m_Name; }
 
 		/// <summary>
-		/// Set the name of the mesh
+		/// Set a new value for IsTransparant
 		/// </summary>
-		/// <param name="name: ">New name</param>
-		void SetName(const std::string& name) { m_Name = name; }
-
-		/// <summary>
-		/// Set the name of the mesh
-		/// </summary>
-		/// <param name="name: ">New name</param>
-		void SetName(const std::string&& name) { m_Name = name; }
-
-		/// <summary>
-		/// Specify if textures use transparancy
-		/// </summary>
-		/// <param name="isTransparant: ">Is the material transparant</param>
-		void SetIsTransparant(bool isTransparant) { m_IsTransparant = isTransparant; }
+		/// <param name="isTransparant: ">new value</param>
+		void SetIsTransparent(bool isTransparant) { m_IsTransparant = isTransparant; }
 
 		/// <summary>
 		/// Query wether the material uses transparancy
@@ -108,19 +104,28 @@ namespace DDMML
 		bool GetIsTransparant() const { return m_IsTransparant; }
 
 	private:
-		// The name of the mesh
-		std::string m_Name{"UnNamed"};
+		// The name of the object
+		const std::string m_Name;
 
-		// The vertices and of the mesh
+		// List of vertices
 		std::vector<Vertex> m_Vertices{};
+
+		// List of indices
 		std::vector<uint32_t> m_Indices{};
 
-		// The texture names of the mesh
+		// Extra
+
+		// List of diffuse textures
 		std::vector<std::string> m_DifuseTextureNames{};
+
+		// List of pbr textures
 		std::vector<std::string> m_PBRTextureNames{};
+
+		// List of normal textures
 		std::vector<std::string> m_NormalTextureNames{};
 
-		bool m_IsTransparant{ false };
+		// Indicates if mesh uses transparency
+		bool m_IsTransparant{};
 	};
 }
 
