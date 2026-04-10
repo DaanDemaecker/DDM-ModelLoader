@@ -98,10 +98,14 @@ void DDMML::ModelLoader::ExtractVertices(Mesh* pNewMesh, aiMesh* mesh)
         newVertex.normal.z = normal.z;
 
         // Tangent
-        auto tangent = mesh->mTangents[i];
-        newVertex.tangent.x = tangent.x;
-        newVertex.tangent.y = tangent.y;
-        newVertex.tangent.z = tangent.z;
+        if (mesh->HasTangentsAndBitangents())
+        {
+            auto tangent = mesh->mTangents[i];
+            newVertex.tangent.x = tangent.x;
+            newVertex.tangent.y = tangent.y;
+            newVertex.tangent.z = tangent.z;
+        }
+        
 
         // Color
         if (mesh->HasVertexColors(0))
