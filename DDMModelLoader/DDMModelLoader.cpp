@@ -23,6 +23,15 @@ DDMML::DDMModelLoader::~DDMModelLoader()
 
 }
 
+std::unique_ptr<DDMML::Mesh> DDMML::DDMModelLoader::LoadModel(const std::string& fileName, const std::string& name)
+{
+	auto mesh = m_pModelLoader->LoadModel(fileName, name);
+
+	SetupTangents(mesh->GetVertices(), mesh->GetIndices());
+
+	return mesh;
+}
+
 void DDMML::DDMModelLoader::LoadScene(const std::string& fileName, std::vector<std::unique_ptr<Mesh>>& meshes)
 {
 	m_pModelLoader->LoadScene(fileName, meshes);

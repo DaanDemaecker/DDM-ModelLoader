@@ -31,7 +31,6 @@ void DDMML::ModelLoader::LoadScene(const std::string& fileName, std::vector<std:
    const aiScene* scene = m_pImporter->ReadFile(fileName,
        aiProcess_Triangulate |
        aiProcess_FlipUVs |
-       aiProcess_CalcTangentSpace |
        aiProcess_GenNormals
    );
 
@@ -105,17 +104,7 @@ void DDMML::ModelLoader::ExtractVertices(Mesh* pNewMesh, aiMesh* mesh)
 
         newVertex.normal.x = normal.x;
         newVertex.normal.y = normal.y;
-        newVertex.normal.z = normal.z;
-
-        // Tangent
-        if (mesh->HasTangentsAndBitangents())
-        {
-            auto tangent = mesh->mTangents[i];
-            newVertex.tangent.x = tangent.x;
-            newVertex.tangent.y = tangent.y;
-            newVertex.tangent.z = tangent.z;
-        }
-        
+        newVertex.normal.z = normal.z;        
 
         // Color
         if (mesh->HasVertexColors(0))

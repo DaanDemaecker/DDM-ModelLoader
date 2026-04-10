@@ -38,6 +38,14 @@ namespace DDMML
 		DDMModelLoader& operator=(DDMModelLoader&& other) = delete;
 
 		/// <summary>
+		/// Load in an entire 3D file into one mesh
+		/// </summary>
+		/// <param name="fileName: ">path to the file of the 3D model</param>
+		/// <param name="name: ">name to give to the object</param>
+		/// <returns>Unique pointer to the created mesh</returns>
+		std::unique_ptr<Mesh> LoadModel(const std::string& fileName, const std::string& name);
+
+		/// <summary>
 		/// Loads in a scene given a file path
 		/// <params>
 		///	- filename: The name of the scene file
