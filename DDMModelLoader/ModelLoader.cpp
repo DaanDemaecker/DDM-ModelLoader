@@ -154,8 +154,8 @@ std::unique_ptr<DDMML::Mesh> DDMML::ModelLoader::ConvertSceneToMesh(std::vector<
 {
     std::unique_ptr<Mesh> newMesh = std::make_unique<Mesh>(name);
 
-    auto vertices = newMesh->GetVertices();
-    auto indices = newMesh->GetIndices();
+    auto& vertices = newMesh->GetVertices();
+    auto& indices = newMesh->GetIndices();
 
     for (auto& currentMesh : sceneMeshes)
     {
