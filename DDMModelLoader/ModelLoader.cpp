@@ -29,18 +29,25 @@ std::unique_ptr<DDMML::Mesh> DDMML::ModelLoader::LoadModel(const std::string& fi
 
 void DDMML::ModelLoader::LoadScene(const std::string& fileName, std::vector<std::unique_ptr<Mesh>>& meshes)
 {
-   const aiScene* scene = m_pImporter->ReadFile(fileName,
-       aiProcess_Triangulate |
-       aiProcess_FlipUVs |
-       aiProcess_GenNormals
-   );
-
-    if (scene == nullptr || scene->mRootNode == nullptr)
+    try
     {
-        return;
-    }
+        const aiScene* scene = m_pImporter->ReadFile(fileName,
+            aiProcess_Triangulate |
+            aiProcess_FlipUVs |
+            aiProcess_GenNormals
+        );
 
-    ProcessNode(meshes, scene->mRootNode, scene, fileName);
+        if (scene == nullptr || scene->mRootNode == nullptr)
+        {
+            return;
+        }
+
+        ProcessNode(meshes, scene->mRootNode, scene, fileName);
+    }
+    catch (const std::exception& e)
+    {
+        std::cout << e.what() << std::endl;
+    }
 }
 
 void DDMML::ModelLoader::ProcessNode(std::vector<std::unique_ptr<Mesh>>& meshes, aiNode* pNode, const aiScene* pScene, const std::string& fileName)
