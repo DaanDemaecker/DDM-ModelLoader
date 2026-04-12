@@ -7,6 +7,7 @@
 // Standard library includes
 #include <stdexcept>
 #include <algorithm>
+#include <iostream>
 
 DDMML::ModelLoader::ModelLoader()
 {
@@ -52,7 +53,7 @@ void DDMML::ModelLoader::ProcessNode(std::vector<std::unique_ptr<Mesh>>& meshes,
         {
             auto mesh = pScene->mMeshes[index];
 
-            meshes.push_back(ProcessMesh(mesh));
+            meshes.push_back(ProcessMesh(mesh, pScene));
         }
     }
 
@@ -65,7 +66,7 @@ void DDMML::ModelLoader::ProcessNode(std::vector<std::unique_ptr<Mesh>>& meshes,
     }
 }
 
-std::unique_ptr<DDMML::Mesh> DDMML::ModelLoader::ProcessMesh(aiMesh* mesh)
+std::unique_ptr<DDMML::Mesh> DDMML::ModelLoader::ProcessMesh(aiMesh* mesh, const aiScene* pScene)
 {
     const std::string name = mesh->mName.C_Str();
 
@@ -75,41 +76,43 @@ std::unique_ptr<DDMML::Mesh> DDMML::ModelLoader::ProcessMesh(aiMesh* mesh)
 
 
     auto& indices = newMesh->GetIndices();
-    indices.reserve(indices.size() + mesh->mNumFaces);
+    indices.reserve(indices.size() + mesh->mNumFaces * 3);
     
     ExtractIndices(indices, mesh);
+
+    ExtractTextures(newMesh.get(), mesh, pScene);
     
     return newMesh;
 }
 
-void DDMML::ModelLoader::ExtractVertices(Mesh* pNewMesh, aiMesh* mesh)
+void DDMML::ModelLoader::ExtractVertices(Mesh* pNewMesh, aiMesh* pMesh)
 {
 
     auto& vertices = pNewMesh->GetVertices();
-    vertices.reserve(vertices.size() + mesh->mNumVertices);
+    vertices.reserve(vertices.size() + pMesh->mNumVertices);
 
-    for (int i{}; i < mesh->mNumVertices; ++i)
+    for (int i{}; i < pMesh->mNumVertices; ++i)
     {
         auto newVertex = DDMML::Vertex{};
 
         // Position
-        auto vertex = mesh->mVertices[i];
+        auto vertex = pMesh->mVertices[i];
 
         newVertex.pos.x = vertex.x;
         newVertex.pos.y = vertex.y;
         newVertex.pos.z = vertex.z;
 
         // Normal
-        auto normal = mesh->mNormals[i];
+        auto normal = pMesh->mNormals[i];
 
         newVertex.normal.x = normal.x;
         newVertex.normal.y = normal.y;
         newVertex.normal.z = normal.z;        
 
         // Color
-        if (mesh->HasVertexColors(0))
+        if (pMesh->HasVertexColors(0))
         {
-            auto color = mesh->mColors[0][i];
+            auto color = pMesh->mColors[0][i];
 
             newVertex.color.x = color.r;
             newVertex.color.y = color.g;
@@ -123,9 +126,9 @@ void DDMML::ModelLoader::ExtractVertices(Mesh* pNewMesh, aiMesh* mesh)
         }
 
         // UVs
-        if (mesh->HasTextureCoords(0))
+        if (pMesh->HasTextureCoords(0))
         {
-            auto uvSet = mesh->mTextureCoords[0][i];
+            auto uvSet = pMesh->mTextureCoords[0][i];
 
             newVertex.texCoord.x = uvSet.x;
             newVertex.texCoord.y = uvSet.y;
@@ -135,19 +138,45 @@ void DDMML::ModelLoader::ExtractVertices(Mesh* pNewMesh, aiMesh* mesh)
     }
 }
 
-
-
-void DDMML::ModelLoader::ExtractIndices(std::vector<uint32_t>& indices, aiMesh* mesh)
+void DDMML::ModelLoader::ExtractIndices(std::vector<uint32_t>& indices, aiMesh* pMesh)
 {
-    for (int i{}; i < mesh->mNumFaces; ++i)
+    for (int i{}; i < pMesh->mNumFaces; ++i)
     {
-        auto face = mesh->mFaces[i];
+        auto face = pMesh->mFaces[i];
 
         for (int j{}; j < face.mNumIndices; ++j)
         {
             indices.push_back(face.mIndices[j]);
         }
     }
+}
+
+void DDMML::ModelLoader::ExtractTextures(Mesh* pNewMesh, aiMesh* pMesh, const aiScene* pScene)
+{
+    unsigned int materialIndex = pMesh->mMaterialIndex;
+
+    if (materialIndex < 0)
+    {
+        return;
+    }
+
+    auto material = pScene->mMaterials[materialIndex];
+    
+
+    // Diffuse
+    auto& diffuseTextures = pNewMesh->GetDiffuseTextureNames();
+
+    diffuseTextures.reserve(material->GetTextureCount(aiTextureType_BASE_COLOR));
+
+    for (int i{}; i < material->GetTextureCount(aiTextureType_BASE_COLOR); ++i)
+    {
+        aiString fileName{};
+
+        material->GetTexture(aiTextureType_BASE_COLOR, i, &fileName);
+
+        std::cout << fileName.C_Str() << std::endl;
+    }
+        
 }
 
 std::unique_ptr<DDMML::Mesh> DDMML::ModelLoader::ConvertSceneToMesh(std::vector<std::unique_ptr<Mesh>>& sceneMeshes, const std::string& name)

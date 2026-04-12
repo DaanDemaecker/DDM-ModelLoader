@@ -68,22 +68,31 @@ namespace DDMML
 		/// Process an assimp mesh and convert it to a DDMML mesh
 		/// </summary>
 		/// <param name="mesh: ">input mesh</param>
+		/// <param name="pScene: ">pointer to the overall scene</param>
 		/// <returns>unique pointer to output mesh</returns>
-		std::unique_ptr<Mesh> ProcessMesh(aiMesh* mesh);
+		std::unique_ptr<Mesh> ProcessMesh(aiMesh* mesh, const aiScene* pScene);
 
 		/// <summary>
 		/// Extract all vertices and add them to the list
 		/// </summary>
 		/// <param name="pNewMesh: ">pointer to the mesh being created</param>
 		/// <param name="mesh: ">mesh to extract from</param>
-		void ExtractVertices(Mesh* pNewMesh, aiMesh* mesh);
+		void ExtractVertices(Mesh* pNewMesh, aiMesh* pMesh);
 
 		/// <summary>
 		/// Extract all indices and add them to the list
 		/// </summary>
 		/// <param name="indices: ">list of indices to append to</param>
 		/// <param name="mesh: ">mesh to extract from</param>
-		void ExtractIndices(std::vector<uint32_t>& indices, aiMesh* mesh);
+		void ExtractIndices(std::vector<uint32_t>& indices, aiMesh* pMesh);
+
+		/// <summary>
+		/// Extract the textures fom the aiMesh to the newly created mesh
+		/// </summary>
+		/// <param name="pNewMesh: ">pointer to the mesh being created</param>
+		/// <param name="mesh: ">mesh to extract from</param>
+		/// <param name="pScene: ">pointer to the overall scene</param>
+		void ExtractTextures(Mesh* pNewMesh, aiMesh* pMesh, const aiScene* pScene);
 		
 		/// <summary>
 		/// Convert a list of meshes into a single mesh
