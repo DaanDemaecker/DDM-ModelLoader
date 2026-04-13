@@ -29,28 +29,23 @@ std::unique_ptr<DDMML::Mesh> DDMML::ModelLoader::LoadModel(const std::string& fi
 
 void DDMML::ModelLoader::LoadScene(const std::string& fileName, std::vector<std::unique_ptr<Mesh>>& meshes)
 {
-    try
-    {
-        const aiScene* scene = m_pImporter->ReadFile(fileName,
-            aiProcess_Triangulate |
-            aiProcess_FlipUVs |
-            aiProcess_GenNormals
-        );
+    const aiScene* scene = m_pImporter->ReadFile(fileName,
+        aiProcess_Triangulate |
+        aiProcess_FlipUVs |
+        aiProcess_GenNormals
+    );
 
-        if (scene == nullptr || scene->mRootNode == nullptr)
-        {
-            return;
-        }
-
-        ProcessNode(meshes, scene->mRootNode, scene, fileName);
-    }
-    catch (const std::exception& e)
+    if (scene == nullptr || scene->mRootNode == nullptr)
     {
-        std::cout << e.what() << std::endl;
+        return;
     }
+
+    auto directory = GetDirectory(fileName);
+
+    ProcessNode(meshes, scene->mRootNode, scene, directory);
 }
 
-void DDMML::ModelLoader::ProcessNode(std::vector<std::unique_ptr<Mesh>>& meshes, aiNode* pNode, const aiScene* pScene, const std::string& fileName)
+void DDMML::ModelLoader::ProcessNode(std::vector<std::unique_ptr<Mesh>>& meshes, aiNode* pNode, const aiScene* pScene, const std::string& directory)
 {
     for (int i{}; i < pNode->mNumMeshes; ++i)
     {
@@ -60,7 +55,7 @@ void DDMML::ModelLoader::ProcessNode(std::vector<std::unique_ptr<Mesh>>& meshes,
         {
             auto mesh = pScene->mMeshes[index];
 
-            meshes.push_back(ProcessMesh(mesh, pScene));
+            meshes.push_back(ProcessMesh(mesh, pScene, directory));
         }
     }
 
@@ -69,11 +64,11 @@ void DDMML::ModelLoader::ProcessNode(std::vector<std::unique_ptr<Mesh>>& meshes,
     {
         aiNode* newNode = pNode->mChildren[i];
 
-        ProcessNode(meshes, newNode, pScene, fileName);
+        ProcessNode(meshes, newNode, pScene, directory);
     }
 }
 
-std::unique_ptr<DDMML::Mesh> DDMML::ModelLoader::ProcessMesh(aiMesh* mesh, const aiScene* pScene)
+std::unique_ptr<DDMML::Mesh> DDMML::ModelLoader::ProcessMesh(aiMesh* mesh, const aiScene* pScene, const std::string& directory)
 {
     const std::string name = mesh->mName.C_Str();
 
@@ -87,7 +82,7 @@ std::unique_ptr<DDMML::Mesh> DDMML::ModelLoader::ProcessMesh(aiMesh* mesh, const
     
     ExtractIndices(indices, mesh);
 
-    ExtractTextures(newMesh.get(), mesh, pScene);
+    ExtractTextures(newMesh.get(), mesh, pScene, directory);
     
     return newMesh;
 }
@@ -158,7 +153,7 @@ void DDMML::ModelLoader::ExtractIndices(std::vector<uint32_t>& indices, aiMesh* 
     }
 }
 
-void DDMML::ModelLoader::ExtractTextures(Mesh* pNewMesh, aiMesh* pMesh, const aiScene* pScene)
+void DDMML::ModelLoader::ExtractTextures(Mesh* pNewMesh, aiMesh* pMesh, const aiScene* pScene, const std::string& directory)
 {
     unsigned int materialIndex = pMesh->mMaterialIndex;
 
@@ -171,19 +166,39 @@ void DDMML::ModelLoader::ExtractTextures(Mesh* pNewMesh, aiMesh* pMesh, const ai
     
 
     // Diffuse
-    auto& diffuseTextures = pNewMesh->GetDiffuseTextureNames();
+    ExtractTextureType(pNewMesh->GetDiffuseTextureNames(), material, aiTextureType_BASE_COLOR, directory);
 
-    diffuseTextures.reserve(material->GetTextureCount(aiTextureType_BASE_COLOR));
 
-    for (int i{}; i < material->GetTextureCount(aiTextureType_BASE_COLOR); ++i)
+    // Normal
+    ExtractTextureType(pNewMesh->GetNormalTextureNames(), material, aiTextureType_NORMALS, directory);
+}
+
+void DDMML::ModelLoader::ExtractTextureType(std::vector<std::string>& textureNames, aiMaterial* pMaterial, aiTextureType type, const std::string& directory)
+{
+    textureNames.reserve(pMaterial->GetTextureCount(type));
+
+    for (int i{}; i < pMaterial->GetTextureCount(type); ++i)
     {
         aiString fileName{};
 
-        material->GetTexture(aiTextureType_BASE_COLOR, i, &fileName);
+        pMaterial->GetTexture(type, i, &fileName);
 
-        std::cout << fileName.C_Str() << std::endl;
+        std::string fullPath = directory + fileName.C_Str();
+
+        textureNames.push_back(fullPath);
     }
-        
+}
+
+std::string DDMML::ModelLoader::GetDirectory(const std::string& path)
+{
+    int index = path.find_last_of("/");
+
+    if (index < 0)
+    {
+        return "";
+    }
+
+    return path.substr(index + 1);
 }
 
 std::unique_ptr<DDMML::Mesh> DDMML::ModelLoader::ConvertSceneToMesh(std::vector<std::unique_ptr<Mesh>>& sceneMeshes, const std::string& name)

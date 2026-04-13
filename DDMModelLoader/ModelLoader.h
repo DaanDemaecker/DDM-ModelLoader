@@ -61,16 +61,17 @@ namespace DDMML
 		/// <param name="meshes: ">list of meshes to append to</param>
 		/// <param name="pNode: ">node to process</param>
 		/// <param name="pScene: ">scene that the node belons to</param>
-		/// <param name="fileName: ">filename of the scene</param>
-		void ProcessNode(std::vector<std::unique_ptr<Mesh>>& meshes, aiNode* pNode, const aiScene* pScene, const std::string& fileName);
+		/// <param name="directory: ">directory of the file</param>
+		void ProcessNode(std::vector<std::unique_ptr<Mesh>>& meshes, aiNode* pNode, const aiScene* pScene, const std::string& directory);
 
 		/// <summary>
 		/// Process an assimp mesh and convert it to a DDMML mesh
 		/// </summary>
 		/// <param name="mesh: ">input mesh</param>
 		/// <param name="pScene: ">pointer to the overall scene</param>
+		/// <param name="directory: ">directory of the file</param>
 		/// <returns>unique pointer to output mesh</returns>
-		std::unique_ptr<Mesh> ProcessMesh(aiMesh* mesh, const aiScene* pScene);
+		std::unique_ptr<Mesh> ProcessMesh(aiMesh* mesh, const aiScene* pScene, const std::string& directory);
 
 		/// <summary>
 		/// Extract all vertices and add them to the list
@@ -92,8 +93,25 @@ namespace DDMML
 		/// <param name="pNewMesh: ">pointer to the mesh being created</param>
 		/// <param name="mesh: ">mesh to extract from</param>
 		/// <param name="pScene: ">pointer to the overall scene</param>
-		void ExtractTextures(Mesh* pNewMesh, aiMesh* pMesh, const aiScene* pScene);
+		/// <param name="directory: ">directory of the file</param>
+		void ExtractTextures(Mesh* pNewMesh, aiMesh* pMesh, const aiScene* pScene, const std::string& directory);
+
+		/// <summary>
+		/// Extract a single type of texture out of a material
+		/// </summary>
+		/// <param name="textureNames: ">list of texture names to append to</param>
+		/// <param name="material: ">material to extract from</param>
+		/// <param name="type: ">texture type to extract</param>
+		/// <param name="directory: ">directory of the file</param>
+		void ExtractTextureType(std::vector<std::string>& textureNames, aiMaterial* pMaterial, aiTextureType type, const std::string& directory);
 		
+		/// <summary>
+		/// Get the directory a given file is in
+		/// </summary>
+		/// <param name="path: ">path to the file in question</param>
+		/// <returns>Path of the directory</returns>
+		std::string GetDirectory(const std::string& path);
+
 		/// <summary>
 		/// Convert a list of meshes into a single mesh
 		/// </summary>
