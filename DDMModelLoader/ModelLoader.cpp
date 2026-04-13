@@ -198,7 +198,7 @@ std::string DDMML::ModelLoader::GetDirectory(const std::string& path)
         return "";
     }
 
-    return path.substr(index + 1);
+    return path.substr(0, index + 1);
 }
 
 std::unique_ptr<DDMML::Mesh> DDMML::ModelLoader::ConvertSceneToMesh(std::vector<std::unique_ptr<Mesh>>& sceneMeshes, const std::string& name)
